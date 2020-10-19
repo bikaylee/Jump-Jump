@@ -20,5 +20,4 @@ Qualitative evaluation:
 
 ## Appointment with the Instructor
 
-Our meeting time is: 
-The meeting place is: 
+Our meeting time is: 3:15pm - 3:30pm, Friday, October 23, 2020
