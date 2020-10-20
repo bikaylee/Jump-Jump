@@ -3,7 +3,7 @@ layout: default
 title:  Team
 ---
 
-# {{ page.title }}
+# {{ Ranch Crossing }}
 
 
 ## Bixia Deng
