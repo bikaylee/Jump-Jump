@@ -12,5 +12,5 @@ title:  Team
 ## Hongen Lei
 ***UCI Net ID***: hongenl
 
-## USER 3
-***UCI Net ID***: ucinetid3
+## Wencong She
+***UCI Net ID***: wencongs
