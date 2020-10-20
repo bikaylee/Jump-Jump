@@ -15,10 +15,10 @@ Output: A series of optimal actions to achieve certain goals(interactions with a
 Reinforcement Learning, Dijkstra’s Shortest Path Algorithm(Navigation), and more later. 
 
 ## Evaluation Plan
-### Quantitative evaluation: 
+#### Quantitative evaluation: 
 The baseline is that the agent will learn how to make one pair of animals to produce their offspring by feeding them the right food and not to kill animals. The main goal is to breed animals in order to reach a certain amount of offspring. Metrics include time used, a time frame, and the amount of animals it can produce. One skill that is expected for learning is the ability to pick the right food to feed the right pair of animals. The second skill is knowing the optimal way to achieve the maximum amount of offsprings possible. The optimal goal is to produce the maximum amount of offsprings within the least amount of time. 
 
-### Qualitative evaluation:
+#### Qualitative evaluation:
 In order to show the project works, the agent will count the number of animals in the farm, and when the quantity of a specific type of animal has raised to a certain number that means we reach the goal. Otherwise, if the agent killed some animals by accident, the mission will be restarted.
 
 
