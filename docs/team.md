@@ -3,8 +3,6 @@ layout: default
 title:  Team
 ---
 
-# Ranch Crossing
-
 
 ## Bixia Deng
 ***UCI Net ID***: bixiad
