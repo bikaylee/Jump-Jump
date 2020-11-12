@@ -4,7 +4,7 @@ title:  Home
 ---
 
 
-<img src="http://g.recordit.co/3kgNawkGHM.gif" width=800><br>
+<img src="http://g.recordit.co/3kgNawkGHM.gif" width=600><br>
 
 
 [Source Code:  https://github.com/bikaylee/Jump-Jump]( https://github.com/bikaylee/Jump-Jump)
