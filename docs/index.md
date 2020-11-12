@@ -3,7 +3,11 @@ layout: default
 title:  Home
 ---
 
-Source code: https://github.com/bikaylee/Jump-Jump
+
+<img src="http://g.recordit.co/3kgNawkGHM.gif" width=250><br>
+
+
+[Source Code:  https://github.com/bikaylee/Jump-Jump]( https://github.com/bikaylee/Jump-Jump)
 
 
 Reports:
