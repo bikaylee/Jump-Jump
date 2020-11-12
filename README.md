@@ -16,7 +16,8 @@ Our project is a Jump & Jump gameplay stimulation in Minecraft, with different s
 
 ### Game Demo GIF
 
-<img src="http://g.recordit.co/Cqg78VqKwC.gif" width=250><br>
+<img src="http://g.recordit.co/4CEtMmbRC2.gif" width=250><br>
+
 
 ### Reference 
 - https://www.omnicalculator.com/physics/projectile-motion
