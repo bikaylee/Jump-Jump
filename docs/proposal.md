@@ -4,22 +4,24 @@ title:  Proposal
 ---
 
 ## Summary of the Project
-The goal of our Ranch Crossing AI is to observe and learn about the optimal methods of breeding animals in Minecraft. The agent is given with a sword and the necessary items that are required for animal breeding, for example: carrots, potatoes and beetroots. The agent will use the items to interact with animals in the ranch and discover the proper item that can trigger the love mode of a type of animal. The use of improper items to interact with animals may lead to the decrease of population. The agent will then learn about how love mode can be utilized to breed animals with the same species. And eventually the agent will obtain the ability to rapidly increase the animal population and to simultaneously breed a large amount of animals in a given time. 
+Our project is a Jump & Jump gameplay stimulation in Minecraft, with different sizes and shapes of platform for the agent to jump on based on gravity and velocity. The goal of our project, Jump Jump, is to observe and learn about the optimal methods of jumping to the next block without trying to swim in lava. In order to give the agent a better learning environment, the agent will receive reward if he lands on the platform and even larger reward if landing on the center of the platform. Otherwise, negative reward is given for trying to swim in lava. The agent does not need to know the direction for the next block because he will be jumping towards one direction. However, his jumping distance will be dependent solely on the velocity picked by the agent. And eventually, the agent will obtain the ability to land on the center of the platform efficiently and reach the farest platform safely.
 
-Input: the observation state(the animal population, items in the toolbar and items in the inventory).
+Input: the agent state(including the coordinates and the chosen velocity).
 
-Output: A series of optimal actions to achieve certain goals(interactions with animals).
+Output: A series of optimal actions to achieve certain goals(landing on the center of the next platform).
+
+<img src="http://g.recordit.co/4CEtMmbRC2.gif" width=250><br>
 
 
 ## AI/ML Algorithms
-Reinforcement Learning, Dijkstra’s Shortest Path Algorithm(Navigation), and more later. 
+Reinforcement Learning, physics simulation, and more later on
 
 ## Evaluation Plan
 #### Quantitative evaluation: 
-The baseline is that the agent will learn how to make one pair of animals to produce their offspring by feeding them the right food and not to kill animals. The main goal is to breed animals in order to reach a certain amount of offspring. Metrics include time used, a time frame, and the amount of animals it can produce. One skill that is expected for learning is the ability to pick the right food to feed the right pair of animals. The second skill is knowing the optimal way to achieve the maximum amount of offsprings possible. The optimal goal is to produce the maximum amount of offsprings within the least amount of time. 
+The metrics can be the reward scores obtained through the reinforcement learning process and the number of center blocks(the block with higher reward) it has landed on. The reward scores will convey about how accurate the agent has landed and how far it reached. The baseline is to have a nonnegative reward score. The metrics and baseline will be improved as we keep revising the algorithms. 
 
 #### Qualitative evaluation:
-In order to show the project works, the agent will count the number of animals in the farm, and when the quantity of a specific type of animal has raised to a certain number that means we reach the goal. Otherwise, if the agent killed some animals by accident, the mission will be restarted.
+The agent’s first task in this project is to survive from falling into the lava. The agent will need to pick an initial velocity first in order to start jumping to the next block.  In order to show that the project works, the agent will land on the next block safely and the landing point will get closer to the center of the block after each jump. Otherwise, the agent will restart if he falls into lava.
 
 
 ## Appointment with the Instructor
