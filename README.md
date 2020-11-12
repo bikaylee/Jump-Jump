@@ -7,12 +7,11 @@ Our project is a Jump & Jump gameplay stimulation in Minecraft, with different s
 ---
 #### Basics 
 - [x] Physics Stimulation
-- [x] Reinforcement Learning
-- [x] Tabular Q-learning
+- [ ] Reinforcement Learning
+- [ ] Tabular Q-learning
 
-#### BONUS
-- [ ] 
-- [ ] 
+#### Maybe More
+
 
 ### Game Demo GIF
 
