@@ -17,3 +17,11 @@ In a few paragraphs, describe your goals for the next 4-5 weeks, whenthe final r
 
 ## Resources Used
 Mention all the resources that you found useful in writing your implementation. This shouldinclude everything like code documentation, AI/ML libraries, source code that you used, StackOverflow, etc.You do not have to be comprehensive, but it is important to report the ones that are crucial to your project. Iwould like to know these so that the more useful ones can be shared with others in the course.
+
+ - [Verifying proper displacement range for particular velocity][displacementChecker]
+ - [Malmo XML Schema Documentation][MalmoXML]
+ - [Physics: Projectile Motion][physics]
+ 
+ [displacementChecker]: https://www.omnicalculator.com/physics/projectile-motion
+ [MalmoXML]: https://microsoft.github.io/malmo/0.14.0/Schemas/Mission.html
+ [physics]: https://courses.lumenlearning.com/physics/chapter/3-4-projectile-motion/
