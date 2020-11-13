@@ -82,7 +82,7 @@ $$\gamma:$$ discount factor <br>
 $$\max_a Q(S_{t+1},a):$$ estimate of optimal future value <br>
 $$R_{t+1} + \gamma\max_a Q(S_{t+1},a)- Q(s_t, A_t):$$ temporal difference <br><br>
 
-<img src="/image/qLearning.png" width="300" />
+<img src="image/qLearning.png" width="300" />
 
 ### Evaluation
 
