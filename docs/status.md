@@ -20,9 +20,9 @@ Other area of platform: +10
 Lava: -10
 
 #### State Space
-$$(s^3)(n-1)$$
-$$s:$$ the max side size of among the platforms (s = 3 for 3x3 platforms)
-$$n:$$ the number of platforms
+$$(s^3)(n-1)$$ <br>
+$$s:$$ the max side size of among the platforms (s = 3 for 3x3 platforms)<br>
+$$n:$$ the number of platforms<br>
 
 #### Action Space
 Our action space is a new implementation based on transpose to achieve the action of projectile motion of jumping. Here are the equations we used for constant gravitational acceleration:
@@ -73,14 +73,14 @@ Q(S_t, A_t)\leftarrow Q(S_t, A_t) + \alpha[R_{t+1} + \gamma\max_a Q(S_{t+1},a)- 
 \end{align}
 $$
 
-$$S_t:$$ current state 
-$$A_t:$$ current action 
-$$Q(S_t, A_t):$$ old values 
-$$\alpha:$$ learning rate 
-$$R_{t+1}:$$ reward 
-$$\gamma:$$ discount factor 
-$$\max_a Q(S_{t+1},a):$$ estimate of optimal future value 
-$$R_{t+1} + \gamma\max_a Q(S_{t+1},a)- Q(s_t, A_t):$$ temporal difference 
+$$S_t:$$ current state <br>
+$$A_t:$$ current action <br>
+$$Q(S_t, A_t):$$ old values <br>
+$$\alpha:$$ learning rate <br>
+$$R_{t+1}:$$ reward <br>
+$$\gamma:$$ discount factor <br>
+$$\max_a Q(S_{t+1},a):$$ estimate of optimal future value <br>
+$$R_{t+1} + \gamma\max_a Q(S_{t+1},a)- Q(s_t, A_t):$$ temporal difference <br>
 
 
 
