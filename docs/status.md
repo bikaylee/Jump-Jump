@@ -3,12 +3,6 @@ layout: default
 title:  Status
 ---
 
----
-layout: default
-title:  Status
----
-
-
 ### Video
 <iframe width="560" height="315" src=" " frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
@@ -26,9 +20,9 @@ Other area of platform: +10
 Lava: -10
 
 #### State Space
-$(s^3)(n-1)$
-$s:$ the max side size of among the platforms (s = 3 for 3x3 platforms)
-$n:$ the number of platforms
+$$(s^3)(n-1)$$
+$$s:$$ the max side size of among the platforms (s = 3 for 3x3 platforms)
+$$n:$$ the number of platforms
 
 #### Action Space
 Our action space is a new implementation based on transpose to achieve the action of projectile motion of jumping. Here are the equations we used for constant gravitational acceleration:
@@ -42,7 +36,7 @@ $$
 \end{align}
 $$
 
-This is a matrix we will be storing in order to send corresponding commands to perform projectile motion. $\begin{bmatrix} X & v_x \\ Y & v_y \\ Z & v_z \end{bmatrix}\ $, where X, Y, Z denotes the position of the agent and their velocity according to its axis. 
+This is a matrix we will be storing in order to send corresponding commands to perform projectile motion. $$\begin{bmatrix} X & v_x \\ Y & v_y \\ Z & v_z \end{bmatrix}\ $$, where X, Y, Z denotes the position of the agent and their velocity according to its axis. 
 
 Here is our implementation: 
 ```
@@ -74,18 +68,19 @@ def movement (v, x ,y):
 #### Machine Learning Algorithms
 The main algorithm that we used is using tabular Q-learning to train our jumping agent. According to the lecture materials, the Q-Learning Algorithm: 
 $$
+\begin{align}
 Q(S_t, A_t)\leftarrow Q(S_t, A_t) + \alpha[R_{t+1} + \gamma\max_a Q(S_{t+1},a)- Q(s_t, A_t)]
+\end{align}
 $$
 
-$S_t:$ current state
-$A_t:$ current action
-$Q(S_t, A_t):$ old values, 
-$\alpha:$ learning rate
-$R_{t+1}:$ reward
-$\gamma:$ discount factor
-$\max_a Q(S_{t+1},a):$ estimate of optimal future value
-$R_{t+1} + \gamma\max_a Q(S_{t+1},a)- Q(s_t, A_t):$ temporal difference
-
+$$S_t:$$ current state 
+$$A_t:$$ current action 
+$$Q(S_t, A_t):$$ old values 
+$$\alpha:$$ learning rate 
+$$R_{t+1}:$$ reward 
+$$\gamma:$$ discount factor 
+$$\max_a Q(S_{t+1},a):$$ estimate of optimal future value 
+$$R_{t+1} + \gamma\max_a Q(S_{t+1},a)- Q(s_t, A_t):$$ temporal difference 
 
 
 
