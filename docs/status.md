@@ -25,7 +25,7 @@ $$s:$$ the max side size of among the platforms (s = 3 for 3x3 platforms) <br>
 $$n:$$ the number of platforms <br><br>
 
 #### Action Space
-Our action space is a new implementation based on transpose to achieve the action of projectile motion of jumping. Here are the equations we used for constant gravitational acceleration: <br><br>
+Our action space is a new implementation based on teleport to achieve the action of projectile motion of jumping. Here are the equations we used for constant gravitational acceleration: <br><br>
 
 ##### Classical Mechanics
 $$
