@@ -12,20 +12,20 @@ Some minor changes have been made to the proposed ideas to enhance the creativit
 
 
 ### Approach
-Give a detailed description of your approach, in a few paragraphs. You should summarize the main algorithm you are using, such as by writing out the update equation (even if it is off-the-shelf). You Should also give details about the approach as it applies to your scenario.  For example, if you are using reinforcement learning for a given scenario, describe the setup in some detail, i.e. how many states/actions you have, what does the reward function look like. A good guideline is to incorporate sufficient details so that most of your approach is reproducible by a reader. I encourage you to use figures for this, as appropriate,as we used in the writeups for the assignments. I recommend at least 2-3 paragraphs.<br>
+Give a detailed description of your approach, in a few paragraphs. You should summarize the main algorithm you are using, such as by writing out the update equation (even if it is off-the-shelf). You Should also give details about the approach as it applies to your scenario.  For example, if you are using reinforcement learning for a given scenario, describe the setup in some detail, i.e. how many states/actions you have, what does the reward function look like. A good guideline is to incorporate sufficient details so that most of your approach is reproducible by a reader. I encourage you to use figures for this, as appropriate,as we used in the writeups for the assignments. I recommend at least 2-3 paragraphs.<br><br>
 
 #### Environment & Reward System
-Jumping platform Center: +100
-Other area of platform: +10
-Lava: -10<br>
+Jumping platform Center: +100 <br>
+Other area of platform: +10 <br>
+Lava: -10 <br><br>
 
 #### State Space
 $$(s^3)(n-1)$$ <br>
-$$s:$$ the max side size of among the platforms (s = 3 for 3x3 platforms)<br>
-$$n:$$ the number of platforms<br>
+$$s:$$ the max side size of among the platforms (s = 3 for 3x3 platforms) <br>
+$$n:$$ the number of platforms <br><br>
 
 #### Action Space
-Our action space is a new implementation based on transpose to achieve the action of projectile motion of jumping. Here are the equations we used for constant gravitational acceleration: <br>
+Our action space is a new implementation based on transpose to achieve the action of projectile motion of jumping. Here are the equations we used for constant gravitational acceleration: <br><br>
 
 ##### Classical Mechanics
 $$
@@ -66,7 +66,7 @@ def movement (v, x ,y):
 
 
 #### Machine Learning Algorithms
-The main algorithm that we used is using tabular Q-learning to train our jumping agent. According to the lecture materials, the Q-Learning Algorithm: <br>
+The main algorithm that we used is using tabular Q-learning to train our jumping agent. According to the lecture materials, the Q-Learning Algorithm: <br><br>
 $$
 \begin{aligned}
 &Q(S_t, A_t)\leftarrow Q(S_t, A_t) + \alpha[R_{t+1} + \gamma\max_a Q(S_{t+1},a)- Q(s_t, A_t)]
@@ -90,14 +90,14 @@ $$R_{t+1} + \gamma\max_a Q(S_{t+1},a)- Q(s_t, A_t):$$ temporal difference <br><b
 Since the reinforcement learning algorithm is only partially deployed. Currently, we don’t have an accurate measurement of the quantitative values. We thus do not have any graphs to showcase. However, the environmental feedback such as rewards has been established. The agent receives +1 after landing on the non-center block. Landing on the center block rewards the agent with +5. And falling to lava will deduct the reward score by 10. Earning a positive score at the end of the mission signifies that the agent has either reached at least 10 blocks or has reached at least a center block without failing. In addition to gain a further comprehension of the agent’s learning process, we plan to plot its chosen velocities of each state to see how well it is learning and to prevent overfitting. The rewards are subject to be changed.<br>
 
 #### Qualitative
-As for qualitative evaluation, the simplest method to examine the overall quality of the project is to watch the agent’s movement and achievement. By watching the movements of the agent, we can make assumptions about whether the agent is choosing movements at random or it is advancing itself. By seeing how far the agent can make us an intuitive conclusion of the performance of the agent.<br>
+As for qualitative evaluation, the simplest method to examine the overall quality of the project is to watch the agent’s movement and achievement. By watching the movements of the agent, we can make assumptions about whether the agent is choosing movements at random or it is advancing itself. By seeing how far the agent can make us an intuitive conclusion of the performance of the agent.<br><br>
 
 
 
 
 ### Remaining Goals and Challenges
 
-
+<br><br>
 
 ### Resources Used
 
