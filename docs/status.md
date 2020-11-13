@@ -8,7 +8,7 @@ title:  Status
 
 
 ### Project Summary
-Some minor changes have been made to the proposed ideas to enhance the creativity and interest of our project. Instead of keeping the platforms in a fixed size (3x3), we added a 1x1 size platform type. The reward of stepping on the 1x1 size platform is the same as stepping on the center block of a 3x3 size platform In addition, we successfully simulated the jumping mechanism of the original game in the minecraft world. A mission generator is implemented to randomly generate platforms for a mission. Our agent can perceive the environment through the agent states which includes the x, y, z coordinates and its velocity. Our following goal is to complete the implementation of tabular Q-learning algorithms.<br>
+Some minor changes have been made to the proposed ideas to enhance the creativity and interest of our project. Instead of keeping the platforms in a fixed size (3x3), we added a 1x1 size platform type. The reward of stepping on the 1x1 size platform is the same as stepping on the center block of a 3x3 size platform In addition, we successfully simulated the jumping mechanism of the original game in the minecraft world. A mission generator is implemented to randomly generate platforms for a mission. Our agent can perceive the environment through the states which includes the x, y, z coordinates and its velocity. Our following goal is to complete the implementation of tabular Q-learning algorithms.<br>
 
 
 ### Approach
@@ -82,11 +82,11 @@ $$\gamma:$$ discount factor <br>
 $$\max_a Q(S_{t+1},a):$$ estimate of optimal future value <br>
 $$R_{t+1} + \gamma\max_a Q(S_{t+1},a)- Q(s_t, A_t):$$ temporal difference <br><br>
 
-
+<img src="/image/qLearning.png" width="300" />
 
 ### Evaluation
 
-#### Quantitaive
+#### Quantitative
 Since the reinforcement learning algorithm is only partially deployed. Currently, we don’t have an accurate measurement of the quantitative values. We thus do not have any graphs to showcase. However, the environmental feedback such as rewards has been established. The agent receives +1 after landing on the non-center block. Landing on the center block rewards the agent with +5. And falling to lava will deduct the reward score by 10. Earning a positive score at the end of the mission signifies that the agent has either reached at least 10 blocks or has reached at least a center block without failing. In addition to gain a further comprehension of the agent’s learning process, we plan to plot its chosen velocities of each state to see how well it is learning and to prevent overfitting. The rewards are subject to be changed.<br>
 
 #### Qualitative
@@ -95,7 +95,10 @@ As for qualitative evaluation, the simplest method to examine the overall qualit
 
 
 
+
 ### Remaining Goals and Challenges
+
+The current limit of our project is not the algorithm itself but the implementation of the algorithm. We are still in the initial stage of implementing the Q-learning algorithm. We are currently trying to figure out the optimal form of states and the ways to integrate states with Q-learning algorithms. This is the remaining goal of the project. We will schedule an appointment with our mentor to discuss this. A possible challenge we will face is being unable to meet on a regular basis weekly since we are all in different time zones. 
 
 <br><br>
 
@@ -112,5 +115,6 @@ Physics
 
 Machine Learning Algorithm
 - [Q-Learning Wiki](https://en.wikipedia.org/wiki/Q-learning)
+- [Q-Learning Algorithm](https://towardsdatascience.com/a-beginners-guide-to-q-learning-c3e2a30a653c)
 
 
