@@ -2,7 +2,7 @@ CS175 Fall 2020
 
 # Pixel Jump
 
-Our project is a Jump & Jump gameplay stimulation in Minecraft, with different sizes and shapes of platform for the agent to jump on based on gravity and velocity. 
+Our AI project is a Jump & Jump gameplay simulation in Minecraft, with different sizes and shapes of platform for the agent to jump on based on gravity and velocity. 
 
 ---
 #### Website
@@ -10,13 +10,11 @@ https://bikaylee.github.io/Jump-Jump/.
 
 #### Basics 
 - [x] Classical Mechanics
+- [ ] Reinforcement Learning
 - [ ] Tabular Q-learning
 
-#### Maybe More
-
-
 ### Game Demo GIF
-
+<img src="http://g.recordit.co/3kgNawkGHM.gif" width=250><br>
 
 ### Reference 
 Malmo
