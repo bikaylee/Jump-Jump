@@ -9,7 +9,7 @@ Our project is a Jump & Jump gameplay stimulation in Minecraft, with different s
 https://bikaylee.github.io/Jump-Jump/.
 
 #### Basics 
-- [x] Physics Stimulation
+- [x] Classical Mechanics
 - [ ] Tabular Q-learning
 
 #### Maybe More
