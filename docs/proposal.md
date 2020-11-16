@@ -12,7 +12,7 @@ the agent state(including the coordinates and the chosen velocity).
 #### Output: 
 A series of optimal actions to achieve certain goals(landing on the center of the next platform).
 
-<img src="http://g.recordit.co/4CEtMmbRC2.gif" width=250><br>
+<img src="image/wechatDemo.gif" width=250><br>
 
 ### AI/ML Algorithms
 Reinforcement Learning, physics simulation, and more later on
