@@ -6,7 +6,7 @@ title:  Home
 
 <img src="image/MalmoDemo.gif" width=600><br>
 
-Jump & Jump is a game performing physical jump from one point to another with user-control gravitational force and velocity. 
+Pixel Jump is a game performing physical jump from one point to another with user-control gravitational force and velocity. 
 
 
 Source Code:  [https://github.com/bikaylee/Jump-Jump]( https://github.com/bikaylee/Jump-Jump)
