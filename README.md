@@ -11,7 +11,7 @@ https://bikaylee.github.io/Jump-Jump/.
 #### Basics 
 - [x] Classical Mechanics
 - [ ] Reinforcement Learning
-- [ ] Tabular Q-learning
+- [ ] Proximal Policy Optimization
 
 ### Game Demo GIF
 <img src="http://g.recordit.co/3kgNawkGHM.gif" width=250><br>
