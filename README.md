@@ -6,7 +6,7 @@ Our AI project is a Jump & Jump gameplay simulation in Minecraft, with different
 
 ---
 #### Website
-https://bikaylee.github.io/Jump-Jump/.
+https://bikaylee.github.io/Pixel-Jump/.
 
 #### Basics 
 - [x] Classical Mechanics
