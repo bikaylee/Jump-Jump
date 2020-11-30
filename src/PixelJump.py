@@ -128,7 +128,7 @@ class PixelJump(gym.Env):
 
 
 
-    def movement (v, x ,y):
+    def movement (self, v, x ,y):
         ax = 0 
         ay = -9.8  
         t = 0.08
@@ -151,36 +151,48 @@ class PixelJump(gym.Env):
         return M
 
 
-    def perform_jump(movementPath, direction):
-        path = []
-        for a in movementPath:
-            y = a[1]
-            if direction: # 1 = z-positive direction
-                z = a[0]
-                path.append("tp 0.5 {} {}".format(round(y,4),round(z,4)))
-            else: # x-positive direction
-                x = a[0]
-                path.append("tp {} {} 0.5".format(round(x,4),round(y,4)))
-        return path
+#     def perform_jump(self, movementPath, direction):
+#         path = []
+#         for a in movementPath:
+#             y = a[1]
+#             if direction: # 1 = z-positive direction
+#                 z = a[0]
+#                 path.append("tp 0.5 {} {}".format(round(y,4),round(z,4)))
+#             else: # x-positive direction
+#                 x = a[0]
+#                 path.append("tp {} {} 0.5".format(round(x,4),round(y,4)))
+#         return path
 
 
-        x = 0.5
-        action_list = []
-        for i in range(10):
-            velocity = random.uniform(VELOCITY_MIN, VELOCITY_MAX)
-            movement_path = movement(velocity, x, 3)
-            x = movement_path[-1][0]
-            action_list.append(perform_jump(movement_path))
+#         x = 0.5
+#         action_list = []
+#         for i in range(10):
+#             velocity = random.uniform(VELOCITY_MIN, VELOCITY_MAX)
+#             movement_path = movement(velocity, x, 3)
+#             x = movement_path[-1][0]
+#             action_list.append(perform_jump(movement_path))
         
-        for a in action_list:
-            time.sleep(0.5)
-            print()
-            for index in range(len(a)):
-                agent_host.sendCommand(a[index])
-                time.sleep(0.02)
-                print(a[index])
+#         for a in action_list:
+#             time.sleep(0.5)
+#             print()
+#             for index in range(len(a)):
+#                 agent_host.sendCommand(a[index])
+#                 time.sleep(0.02)
+#                 print(a[index])
 
-
+    def perform_jump(self, movementPath, moving_axis, XPos, ZPos):
+        path = []
+        if(moving_axis == 0):
+            for a in movementPath:
+                z = a[0]
+                y = a[1]
+                path.append("tp {} {} {}".format(XPos,round(y,4), round(z,4)))
+        else:
+            for a in movementPath:
+                x = a[0]
+                y = a[1]
+                path.append("tp {} {} {}".format(round(x,4),round(y,4), ZPos))
+        return path
 
     def __init__(self, env_config):  
         # Static Parameters
@@ -190,16 +202,19 @@ class PixelJump(gym.Env):
         self.obs_size = 5
         self.max_episode_steps = 100
         self.log_frequency = 10
-        self.action_dict = {
-            0: 'move 1',  # Move one block forward
-            1: 'turn 1',  # Turn 90 degrees to the right
-            2: 'turn -1',  # Turn 90 degrees to the left
-            3: 'attack 1'  # Destroy block
+        self.axis_dict = {
+            0: 1, 
+            1: 0
         }
+        self.moving_axis = 0  # 0: z, 1: x
+
 
         # Rllib Parameters
-        self.action_space = Discrete(len(self.action_dict))
-        self.observation_space = Box(0, 1, shape=(np.prod([2, self.obs_size, self.obs_size]), ), dtype=np.int32)
+        # self.action_space = Box()
+        self.degree_threshold = (11.72 - 6.77)/3 #threshold for turn degree determination
+        self.action_space = Box(6.77, 11.72, shape = (2,), dtype = np.float32) # action[0] is used to determine its degree, action[1] is the chosne velocity
+        self.observation_space = Box(0, 1, 2, shape=(np.prod([2, self.obs_size, self.obs_size]), ), dtype=np.int32)
+
 
         # Malmo Parameters
         self.agent_host = MalmoPython.AgentHost()
@@ -258,20 +273,37 @@ class PixelJump(gym.Env):
             info: <dict> dictionary of extra information
         """
 
-        # Get Action
-        command = self.action_dict[action]
-        allow_break_action = self.obs[1, int(self.obs_size/2)-1, int(self.obs_size/2)] == 1
-        if command != 'attack 1' or allow_break_action:
-            self.agent_host.sendCommand(command)
-            time.sleep(.1)
-            self.episode_step += 1
+        # Get Cuurent Observation
+        world_state = self.agent_host.getWorldState()
+        for error in world_state.errors:
+            print("Error:", error.text)
+        obs_text = world_state.observations[-1].text
+        obs = json.loads(obs_text) # most recent observation
+        XPos = obs['XPos']
+        YPos = obs['YPos']
+        ZPos = obs['ZPos']
+
+        if (action[0] <= self.degree_threshold):
+            self.agent_host.sendCommand("turn -90")
+            self.moving_axis = self.axis_dict.get(self.moving_axis)
+        elif (action[0] > self.degree_threshold * 2):
+            self.agent_host.sendCommand("turn 90")
+            self.moving_axis = self.axis_dict.get(self.moving_axis)
+
+        if (self.moving_axis == 0):
+            movements = self.perform_jump(self.movement(action[1], ZPos, YPos), self.moving_axis, XPos, ZPos)
+        elif (self.moving_axis == 1):
+            movements = self.perform_jump(self.movement(action[1], XPos, YPos), self.moving_axis, XPos, ZPos)
+
+        for m in movements:
+            self.agent_host.sendCommand(m)
+            time.sleep(0.5)
+        self.episode_step += 1
+
 
         # Get Done
         done = False
-        if self.episode_step >= self.max_episode_steps or \
-                (self.obs[0, int(self.obs_size/2)-1, int(self.obs_size/2)] == 1 and \
-                self.obs[1, int(self.obs_size/2)-1, int(self.obs_size/2)] == 0 and \
-                command == 'move 1'):
+        if self.episode_step >= self.max_episode_steps):
             done = True
             time.sleep(2)  
 
