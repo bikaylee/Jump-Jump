@@ -380,7 +380,15 @@ class PixelJump(gym.Env):
 
                 # Get observation
                 grid = observations['floorAll']
-                grid_binary = [1 if x in BLOCK_TYPES 2 elif x == "glass" else 0 for x in grid]
+                grid_trinary = []
+                for x in grid:
+                    if x in BLOCK_TYPES:
+                        grid_trinary.append(1)
+                    elif x == "glass":
+                        grid_trinary.append(2)
+                    else:
+                        grid_trinary.append(0)
+   
                 obs = np.reshape(grid_binary, (2, self.obs_size, self.obs_size))
 
                 # Rotate observation with orientation of agent
