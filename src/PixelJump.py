@@ -199,7 +199,7 @@ class PixelJump(gym.Env):
         self.size = 50
         self.reward_density = .1
         self.penalty_density = .02
-        self.obs_size = 5
+        self.obs_size = 10
         self.max_episode_steps = 100
         self.log_frequency = 10
         self.axis_dict = {
