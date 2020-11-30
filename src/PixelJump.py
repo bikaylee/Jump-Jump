@@ -117,7 +117,7 @@ class PixelJump(gym.Env):
                             <RewardForTouchingBlockType>
                                 <Block type='glass' reward='100' />
                                 <Block type='iron_block emerald_block gold_block lapis_block diamond_block redstone_block purpur_block' reward='10' />
-                                <Block type='lava' reward='-10' />
+                                <Block type='lava' reward='-200' />
                             </RewardForTouchingBlockType>
                             <AbsoluteMovementCommands/>
                             <DiscreteMovementCommands/>
@@ -380,7 +380,7 @@ class PixelJump(gym.Env):
 
                 # Get observation
                 grid = observations['floorAll']
-                grid_binary = [1 if x == 'diamond_ore' or x == 'lava' else 0 for x in grid]
+                grid_binary = [1 if x in BLOCK_TYPES 2 elif x == "glass" else 0 for x in grid]
                 obs = np.reshape(grid_binary, (2, self.obs_size, self.obs_size))
 
                 # Rotate observation with orientation of agent
