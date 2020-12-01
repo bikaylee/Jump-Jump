@@ -22,7 +22,7 @@ from ray.rllib.agents import ppo
 
 class PixelJump(gym.Env):
 
-    def GetMissionXML():
+    def get_mission_xml(self):
 
         # Starting platform
         xml = "<DrawCuboid x1='0' x2='2' y1='2' y2='2' z1='0' z2='2' type='stone'/>"
@@ -35,21 +35,24 @@ class PixelJump(gym.Env):
         
         while platform_index < max_platform:
             block = random.choice(BLOCK_TYPES)
-
+            
+            num_blocks = 0
             arr = [1, 0, -1]
             for i in range(3):
                 for j in range(3):
                     if random.random() < BLOCK_DENSITY:
                         xml += "<DrawBlock x='{}' y='2' z='{}' type='{}'/>".format(x+arr[j], z+arr[i], block)
+                        num_blocks += 1
 
             # Center block
-            xml += "<DrawBlock x='{}' y='2' z='{}' type='glass'/>".format(x, z)
-
-
-            if random.random() < DIRECTION_FREQ:
-                x += random.randint(GAP_MIN, GAP_MAX) + 3
+            if random.random() < self.goal_block_density:
+                xml += "<DrawBlock x='{}' y='2' z='{}' type='glass'/>".format(x+random.choice(arr), z+random.choice(arr))
             else:
-                z += random.randint(GAP_MIN, GAP_MAX) + 3
+                if num_blocks == 0:
+                    xml += "<DrawBlock x='{}' y='2' z='{}' type='{}'/>".format(x+random.choice(arr), z+random.choice(arr), block)
+
+
+            z += random.randint(GAP_MIN, GAP_MAX) + 3
             platform_index += 1
 
              
@@ -77,7 +80,6 @@ class PixelJump(gym.Env):
                                 xml +\
                                 '''
                             </DrawingDecorator>
-                            <ServerQuitFromTimeUp timeLimitMs="500000"/>
                             <ServerQuitWhenAnyAgentFinishes/>
                         </ServerHandlers>
                     </ServerSection>
@@ -98,13 +100,10 @@ class PixelJump(gym.Env):
                             <ObservationFromFullStats/>
                             <ObservationFromGrid>
                                 <Grid name="self.floorAll">
-                                    <min x="-'''+str(int(self.obs_size/2))+'''" y="1" z="-'''+str(int(self.obs_size/2))+'''"/>
-                                    <max x="'''+str(int(self.obs_size/2))+'''" y="2" z="'''+str(int(self.obs_size/2))+'''"/>
+                                    <min x="-1" y="-1" z="0"/>
+                                    <max x="'''+str(int(self.obs_size_x/2))+'''" y="-1" z="'''+str(int(self.obs_size_z))+'''"/>
                                 </Grid>
                             </ObservationFromGrid>
-                            AgentQuitFromTouchingBlockType>
-                                <Block type="lava"/>
-                            </AgentQuitFromTouchingBlockType>
                             <AgentQuitFromReachingCommandQuota total="'''+str(self.max_episode_steps)+'''" />
                         </AgentHandlers>
                     </AgentSection>
@@ -125,6 +124,7 @@ class PixelJump(gym.Env):
         # Platform definition
         self.block_density = 0.4   # probability of each block
         self.block_size = 1      # 3x3 platform
+        self.goal_block_density = 0.9
 
         # Direction 
         self.direction_freq = 0.3 # change frequency density
@@ -136,23 +136,17 @@ class PixelJump(gym.Env):
         # Platform block types
         self.block_types = ['iron_block', 'emerald_block', 'gold_block', 'lapis_block', 'diamond_block', 'redstone_block', 'purpur_block']
 
-        self.obs_size = 11
+        self.obs_size_z = 11
+        self.obs_size_x = 3
         self.max_episode_steps = 100
         self.log_frequency = 10
-
-        self.moving_axis = 0  # 0: z, 1: x
-        self.axis_dict = {
-            0: 1, 
-            1: 0
-        }
 
         self.XPos = 1.5
         self.YPos = 3
         self.ZPos = 1.5
         
         # Rllib Parameters
-        self.degree_threshold = (self.velocity_max - self.velocity_min)/3 #threshold for turn degree determination
-        self.action_space = Box(self.velocity_min, self.velocity_max, shape = (2,), dtype = np.float32) # action[0] is used to determine its degree, action[1] is the chosne velocity
+        self.action_space = Box(0, 1, shape=(2,), dtype=np.float32) # action[0] is used to determine its degree, action[1] is the chosne velocity
         self.observation_space = Box(0, 1, shape=(np.prod([2, self.obs_size, self.obs_size]), ), dtype=np.int32)
 
 
@@ -201,8 +195,9 @@ class PixelJump(gym.Env):
     
     
 
-    def movement (self, v, x ,y):
+    def movement (self, v, x ,y, z, degree):
         ax = 0 
+        az = 0
         ay = -9.8  
         t = 0.08
         d = np.radians(70) 
@@ -211,30 +206,26 @@ class PixelJump(gym.Env):
 
         vx = v * np.cos(d)
         vy = v * np.sin(d)
+        vz = v * np.tan(np.radians(degree))
 
         while True:
             x = x + vx*t
             y = y + vy*t + 0.5*ay*(t**2)
+            z = z + vz*t
             vx = vx + ax*t
             vy = vy + ay*t
+            vz = vz + az*t
 
             if y < FLOOR:
                 break
-            M.append([x,y])
+            M.append([x,y,z])
         return M
 
-    def perform_jump(self, movementPath, moving_axis, XPos, ZPos):
+    def perform_jump(self, movementPath):
         path = []
-        if(moving_axis == 1):
-            for a in movementPath:
-                x = a[0]
-                y = a[1]
-                path.append("tp {} {} {}".format(round(x,4),round(y,4), round(ZPos,4)))
-        else:
-            for a in movementPath:
-                z = a[0]
-                y = a[1]
-                path.append("tp {} {} {}".format(round(XPos,4),round(y,4), round(z,4)))
+        for a in movementPath:
+            x,y,z = a[0],a[1],a[2]
+            path.append("tp {} {} {}".format(round(x,4),round(y,4), round(z,4)))
         return path
 
     def step(self, action):
@@ -252,24 +243,20 @@ class PixelJump(gym.Env):
         """
 
         time.sleep(1)
-        if action[0] <= self.degree_threshold:
-            self.agent_host.sendCommand("turn -1")
-            self.moving_axis = self.axis_dict.get(self.moving_axis)
+        velocity_diff = self.velocity_max-self.velocity_min 
+        velocity = self.velocity_min + velocity_diff * action[0]  
+        degree = round(-50 + 100 * action[1])
+        movements = self.movement(velocity, self.XPos, self.YPos, self.ZPos, degree)
+        commands = self.perform_jump(movements)
 
-        elif action[0] > self.degree_threshold * 2:
-            self.agent_host.sendCommand("turn 1")
-            self.moving_axis = self.axis_dict.get(self.moving_axis)
+        self.XPos = movements[-1][0]
+        self.YPos = movements[-1][1]
+        self.ZPos = movements[-1][2]
 
-        else:
-            self.agent_host.sendCommand("remains")
-
-        movements = self.movement(action[1], self.ZPos, self.YPos)
-        if self.moving_axis == 1:
-            movements = self.movement(action[1], self.XPos, self.YPos)
-
-        commands = self.perform_jump(movements, self.moving_axis, self.XPos, self.ZPos)
-        
-
+        print()
+        print("action: ", action)
+        print("Velocity: ", velocity)
+        print("Degree: ", degree)
         print()
         for c in commands:
             self.agent_host.sendCommand(c)
@@ -277,11 +264,6 @@ class PixelJump(gym.Env):
             time.sleep(0.05)
         self.episode_step += 1
 
-
-        if self.moving_axis == 0:
-            self.ZPos = movements[-1][0]
-        elif self.moving_axis == 1:
-            self.XPos = movements[-1][0]
 
         # Get Done
         done = False
@@ -304,8 +286,8 @@ class PixelJump(gym.Env):
         self.episode_return += reward
         print("Episode " + str(self.episode_step) + ": " + str(self.episode_return))
 
-        if score == -200:
-            self.reset()
+#         if score == -200:
+#             self.reset()
 
         return self.obs.flatten(), reward, done, dict()
 
@@ -353,7 +335,7 @@ class PixelJump(gym.Env):
         Returns
             observation: <np.array>
         """
-        obs = np.zeros((2, self.obs_size, self.obs_size))
+        obs = np.zeros((self.obs_size_z, self.obs_size_x))
 
         while world_state.is_mission_running:
             time.sleep(0.1)
@@ -372,25 +354,15 @@ class PixelJump(gym.Env):
                 for x in grid:
                     if x in self.block_types:
                         grid_trinary.append(1)
-                    # elif x == "glass":
-                    #     grid_trinary.append(2)
+                    elif x == "glass":
+                        grid_trinary.append(2)
                     else:
                         grid_trinary.append(0)
    
-                obs = np.reshape(grid_trinary, (2, self.obs_size, self.obs_size))
-   
-                obs = np.reshape(grid_binary, (2, self.obs_size, self.obs_size))
-
-                # Rotate observation with orientation of agent
-                yaw = observations['Yaw']
-                if yaw == 270:
-                    obs = np.rot90(obs, k=1, axes=(1, 2))
-                elif yaw == 0:
-                    obs = np.rot90(obs, k=2, axes=(1, 2))
-                elif yaw == 90:
-                    obs = np.rot90(obs, k=3, axes=(1, 2))
-                
+                obs = np.reshape(grid_binary, (self.obs_size_z, self.obs_size_x))
+    
                 break
+        print(obs)
 
         return obs
 
