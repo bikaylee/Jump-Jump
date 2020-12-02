@@ -182,6 +182,9 @@ class PixelJump(gym.Env):
         self.steps.append(current_step + self.episode_step)
         self.episode_return = 0
         self.episode_step = 0
+        self.XPos = 1.5
+        self.YPos = 3
+        self.ZPos = 1.5
 
         # Log
         if len(self.returns) > self.log_frequency and \
