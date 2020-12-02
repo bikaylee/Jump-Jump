@@ -93,7 +93,7 @@ class PixelJump(gym.Env):
                             <RewardForTouchingBlockType>
                                 <Block type='glass' reward='100' />
                                 <Block type='iron_block emerald_block gold_block lapis_block diamond_block redstone_block purpur_block' reward='10' />
-                                <Block type='lava' reward='-200' />
+                                <Block type='lava' reward='-200' behaviour='onceOnly'/>
                             </RewardForTouchingBlockType>
                             <AbsoluteMovementCommands/>
                             <DiscreteMovementCommands/>
@@ -285,6 +285,9 @@ class PixelJump(gym.Env):
             reward += score
         self.episode_return += reward
         print("Episode " + str(self.episode_step) + ": " + str(self.episode_return))
+        
+        if score == -200:
+            done = True
 
 #         if score == -200:
 #             self.reset()
