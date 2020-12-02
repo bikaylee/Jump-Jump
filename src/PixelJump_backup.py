@@ -89,6 +89,7 @@ class PixelJump(gym.Env):
         """
         # Reset Malmo
         world_state = self.init_malmo()
+        time.sleep(0.5)
 
         # Reset Variables
         
@@ -97,7 +98,8 @@ class PixelJump(gym.Env):
         self.steps.append(current_step + self.episode_step)
 
         l = len(self.returns)
-        if (l > 1):         
+        if (l > 1):
+                     
             print("Step :{}".format(current_step))
             print("Velocity: {}".format(self.velocity))
             print("Degree: {}".format(self.degree))
@@ -177,7 +179,7 @@ class PixelJump(gym.Env):
             info: <dict> dictionary of extra information
         """ 
 
-        time.sleep(1)
+        # time.sleep(1)
         # degree = (10-action[0]) * random.choice([-10, 10])
         # velocity = action[1]
 
@@ -217,7 +219,7 @@ class PixelJump(gym.Env):
         # print("Episode " + str(self.episode_step) + ": " + str(self.episode_return))
         # print()
 
-        if score == -200:
+        if score == -5:
             done = True
 
         return self.obs.flatten(), reward, done, dict()
@@ -273,7 +275,7 @@ class PixelJump(gym.Env):
         my_mission.requestVideo(800, 500)
         my_mission.setViewpoint(1)
 
-        max_retries = 3
+        max_retries = 5
         my_clients = MalmoPython.ClientPool()
         my_clients.add(MalmoPython.ClientInfo('127.0.0.1', 10000)) # add Minecraft machines here as available
 
@@ -363,9 +365,9 @@ class PixelJump(gym.Env):
                         </AgentStart>
                         <AgentHandlers>
                             <RewardForTouchingBlockType>
-                                <Block type='glass' reward='100' />
+                                <Block type='glass' reward='80' />
                                 <Block type='iron_block emerald_block gold_block lapis_block diamond_block redstone_block purpur_block' reward='10' />
-                                <Block type='lava' reward='-200' behaviour='onceOnly' />
+                                <Block type='lava' reward='-5' behaviour='onceOnly' />
                             </RewardForTouchingBlockType>
                             <AbsoluteMovementCommands/>
                             <DiscreteMovementCommands/>
