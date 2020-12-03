@@ -61,6 +61,7 @@ class PixelJump(gym.Env):
         self.degree = 0
         self.relative_pos = 0
         self.midpoint = [0,0]
+        # self.total_steps = 0
         
         # Rllib Parameters
         self.action_space = Box(0, 1, shape=(2,), dtype=np.float32) # used to determine its degree and the chosne velocity
@@ -98,12 +99,14 @@ class PixelJump(gym.Env):
 
         l = len(self.returns)
         if (l > 1):         
-            print("Step :{}".format(current_step))
-            print("Velocity: {}".format(self.velocity))
-            print("Degree: {}".format(self.degree))
-            print("Return :{}".format(self.returns[-1]))
-            print("Avg return :{}".format(sum(self.returns)/(l-1)))
-            print()
+              
+            print("Episode {} return: {}".format(len(self.returns)-1, self.episode_return))
+            print("Avg Ep return: {}".format(sum(self.returns)/(l-1)))
+            print("Avg Step return: {}".format(sum(self.returns)/self.steps[-1]))
+
+            print("========================================================\n")  
+
+
 
         self.episode_return = 0
         self.episode_step = 0
@@ -191,6 +194,7 @@ class PixelJump(gym.Env):
         #     time.sleep(0.05)
         self.agent_host.sendCommand(commands[-1])
         self.episode_step += 1
+        # self.total_steps += 1
         time.sleep(1)
 
         # Get Done
@@ -213,33 +217,44 @@ class PixelJump(gym.Env):
         displace_z = self.ZPos - original_z
 
         
-        if (displace_z > self.midpoint[0] + 1):
-            reward += (displace_z - self.midpoint[0] + 1) * -4
-        elif (displace_z < self.midpoint[0] - 1):
-            reward += (self.midpoint[0] - 1 - displace_z) * -4
-        else:
-            reward += 3
+        # if (displace_z > self.midpoint[0] + 1):
+        #     reward += (1 - (displace_z - (self.midpoint[0] + 1))) * 1
+        # elif (displace_z < self.midpoint[0] - 1):
+        #     reward += (1 - ((self.midpoint[0] - 1) - displace_z)) * 1
+        # else:
+        #     reward += 1
 
-        if (displace_x > self.midpoint[1] + 1):
-            reward += (displace_x - self.midpoint[1] + 1) * -4
-        elif (displace_x < self.midpoint[1] - 1):
-            reward += (self.midpoint[1] - 1 - displace_x) * -4
-        else:
-            reward += 3
+        # if (displace_x > self.midpoint[1] + 1):
+        #     reward += (1 - (displace_x - (self.midpoint[1] + 1))) * 1
+        # elif (displace_x < self.midpoint[1] - 1):
+        #     reward += (1 - ((self.midpoint[1] - 1) - displace_x)) * 1
+        # else:
+        #     reward += 1
+
+        # print("dx:",displace_x)
+        # print("dz:", displace_z)
+        # print(self.midpoint)
 
         
 
-
+        reward += (1.5 - abs(displace_x - self.midpoint[1])) * 2
+        reward += (1.5 - abs(displace_z - self.midpoint[0])) * 2
+        # print("R:",reward)
+       
 
 
         for r in world_state.rewards:
             score = r.getValue()
             reward += score
         self.episode_return += reward
-        #print("Episode " + str(self.episode_step) + ": " + str(self.episode_return))
-        print("score: ", score)
 
-        if score == -10:
+        
+        print("Ep {} Step: {}".format(len(self.returns), self.episode_step))
+        print("Velocity: {}".format(self.velocity))
+        print("Step Score: {}".format(reward))
+        # print("Degree: {}".format(self.degree))
+
+        if score == -3:
             done = True
             time.sleep(1)
             
@@ -299,7 +314,7 @@ class PixelJump(gym.Env):
                                     grid_trinary.append(2)
                                 else:
                                     grid_trinary.append(0)
-                                platform_blocks.append([z,x])
+                                platform_blocks.append([z,x-2])
                             else:
                                 grid_trinary.append(0)
                         i += 1
@@ -443,9 +458,9 @@ class PixelJump(gym.Env):
                         </AgentStart>
                         <AgentHandlers>
                             <RewardForTouchingBlockType>
-                                <Block type='glass' reward='100' />
-                                <Block type='iron_block emerald_block gold_block lapis_block diamond_block redstone_block purpur_block' reward='50' />
-                                <Block type='lava' reward='-10' behaviour='onceOnly' />
+                                <Block type='glass' reward='10' />
+                                <Block type='iron_block emerald_block gold_block lapis_block diamond_block redstone_block purpur_block' reward='5' />
+                                <Block type='lava' reward='-3' behaviour='onceOnly' />
                             </RewardForTouchingBlockType>
                             <AbsoluteMovementCommands/>
                             <DiscreteMovementCommands/>
