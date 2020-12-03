@@ -19,103 +19,13 @@ import gym, ray
 from gym.spaces import Discrete, Box
 from ray.rllib.agents import ppo
 
-
 class PixelJump(gym.Env):
-
-    def get_mission_xml(self):
-
-        # Starting platform
-        xml = "<DrawCuboid x1='0' x2='2' y1='2' y2='2' z1='0' z2='2' type='stone'/>"
-
-        z = 2 + random.randint(GAP_MIN, GAP_MAX) + 2 # first platform 
-        x = 1
-
-        platform_index = 1
-        max_platform = 50
-        
-        while platform_index < max_platform:
-            block = random.choice(BLOCK_TYPES)
-            
-            num_blocks = 0
-            arr = [1, 0, -1]
-            for i in range(3):
-                for j in range(3):
-                    if random.random() < BLOCK_DENSITY:
-                        xml += "<DrawBlock x='{}' y='2' z='{}' type='{}'/>".format(x+arr[j], z+arr[i], block)
-                        num_blocks += 1
-
-            # Center block
-            if random.random() < self.goal_block_density:
-                xml += "<DrawBlock x='{}' y='2' z='{}' type='glass'/>".format(x+random.choice(arr), z+random.choice(arr))
-            else:
-                if num_blocks == 0:
-                    xml += "<DrawBlock x='{}' y='2' z='{}' type='{}'/>".format(x+random.choice(arr), z+random.choice(arr), block)
-
-
-            z += random.randint(GAP_MIN, GAP_MAX) + 3
-            platform_index += 1
-
-             
-
-        return '''<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-                <Mission xmlns="http://ProjectMalmo.microsoft.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-
-                    <About>
-                        <Summary>Jump Jump Jump!</Summary>
-                    </About>
-
-                    <ServerSection>
-                        <ServerInitialConditions>
-                            <Time>
-                                <StartTime>12000</StartTime>
-                                <AllowPassageOfTime>true</AllowPassageOfTime>
-                            </Time>
-                            <Weather>clear</Weather>
-                        </ServerInitialConditions>
-                        <ServerHandlers>
-                            <FlatWorldGenerator generatorString="3;7,2;1;"/>
-                            <DrawingDecorator>''' +\
-                                "<DrawCuboid x1='{}' x2='{}' y1='2' y2='2' z1='{}' z2='{}' type='air'/>".format(-50, SIZEx, -50, SIZEz) + \
-                                "<DrawCuboid x1='{}' x2='{}' y1='1' y2='1' z1='{}' z2='{}' type='lava'/>".format(-50, SIZEx, -50, SIZEz) + \
-                                xml +\
-                                '''
-                            </DrawingDecorator>
-                            <ServerQuitWhenAnyAgentFinishes/>
-                        </ServerHandlers>
-                    </ServerSection>
-
-                    <AgentSection mode="Survival">
-                        <Name>James Bond</Name>
-                        <AgentStart>
-                            <Placement x="1.5" y="3" z="1.5" pitch="0"/>
-                        </AgentStart>
-                        <AgentHandlers>
-                            <RewardForTouchingBlockType>
-                                <Block type='glass' reward='100' />
-                                <Block type='iron_block emerald_block gold_block lapis_block diamond_block redstone_block purpur_block' reward='10' />
-                                <Block type='lava' reward='-200' behaviour='onceOnly'/>
-                            </RewardForTouchingBlockType>
-                            <AbsoluteMovementCommands/>
-                            <DiscreteMovementCommands/>
-                            <ObservationFromFullStats/>
-                            <ObservationFromGrid>
-                                <Grid name="self.floorAll">
-                                    <min x="-1" y="-1" z="0"/>
-                                    <max x="'''+str(int(self.obs_size_x/2))+'''" y="-1" z="'''+str(int(self.obs_size_z))+'''"/>
-                                </Grid>
-                            </ObservationFromGrid>
-                            <AgentQuitFromReachingCommandQuota total="'''+str(self.max_episode_steps)+'''" />
-                        </AgentHandlers>
-                    </AgentSection>
-                </Mission>'''
 
     def __init__(self, env_config):  
         # Static Parameters
-
-        self.floor = 3
-
         # Map size
         self.size = 300
+        self.floor = 3
         
         # Gap size between each platfrom
         self.gap_min = 2
@@ -130,25 +40,33 @@ class PixelJump(gym.Env):
         self.direction_freq = 0.3 # change frequency density
 
         # Jumping range displacement
-        self.velocity_min = 6.77  # range = 3m (Minimum possible distance)
+        self.velocity_min =  7.81 # range = 4m (Minimum possible distance)
         self.velocity_max = 11.72 # range = 9m (Maximum possible distance)
 
         # Platform block types
         self.block_types = ['iron_block', 'emerald_block', 'gold_block', 'lapis_block', 'diamond_block', 'redstone_block', 'purpur_block']
 
-        self.obs_size_z = 11
-        self.obs_size_x = 3
-        self.max_episode_steps = 100
-        self.log_frequency = 10
+        self.obs_size_x = 5
+        self.obs_size_z = 10
+        self.max_episode_steps = 50
+        self.log_frequency = 100
 
         self.XPos = 1.5
         self.YPos = 3
         self.ZPos = 1.5
-        
-        # Rllib Parameters
-        self.action_space = Box(0, 1, shape=(2,), dtype=np.float32) # action[0] is used to determine its degree, action[1] is the chosne velocity
-        self.observation_space = Box(0, 1, shape=(np.prod([2, self.obs_size, self.obs_size]), ), dtype=np.int32)
 
+        self.velocity = 0
+        self.degree = 0
+        self.relative_pos = -1
+        self.relative_pos_x = 0
+        self.relative_pos_z = 0
+
+        self.penalty = -1
+        self.goal_reward = 100
+
+        # Rllib Parameters
+        self.action_space = Box(0, 1, shape=(2,), dtype=np.float32) # used to determine its degree and the chosne velocity
+        self.observation_space = Box(0, 2, shape=(np.prod([self.obs_size_z, self.obs_size_x]), ), dtype=np.float32)
 
         # Malmo Parameters
         self.agent_host = MalmoPython.AgentHost()
@@ -165,11 +83,14 @@ class PixelJump(gym.Env):
         self.episode_return = 0
         self.returns = []
         self.steps = []
+        self.current_step = 0
+        self.episode = 0
+        self.episode_score = []
+        self.cur_step = 0
 
     def reset(self):
         """
         Resets the environment for the next episode.
-
         Returns
             observation: <np.array> flattened initial obseravtion
         """
@@ -178,13 +99,27 @@ class PixelJump(gym.Env):
 
         # Reset Variables
         self.returns.append(self.episode_return)
-        current_step = self.steps[-1] if len(self.steps) > 0 else 0
-        self.steps.append(current_step + self.episode_step)
+        self.current_step = self.steps[-1] if len(self.steps) > 0 else 0
+        self.steps.append(self.current_step + self.episode_step)
+
+        l = len(self.returns)
+        e = len(self.episode_score)
+        if l > 1 and e > 0:     
+            print("\n========================================================")    
+            print("\nEpisode return: {}".format(sum(self.episode_score)/e))
+            print("Avg return: {}\n".format(sum(self.returns)/(l-1)))
+
+        self.episode += 1
         self.episode_return = 0
         self.episode_step = 0
+        self.episode_score = []
+
         self.XPos = 1.5
         self.YPos = 3
         self.ZPos = 1.5
+        self.relative_pos_x = 0
+        self.relative_pos_z = 0
+
 
         # Log
         if len(self.returns) > self.log_frequency and \
@@ -195,78 +130,75 @@ class PixelJump(gym.Env):
         self.obs = self.get_observation(world_state)
 
         return self.obs.flatten()
-    
-    
 
-    def movement (self, v, x ,y, z, degree):
-        ax = 0 
-        az = 0
+    
+    def movement (self, v, x, y, z, degree):
+        ax = 0
+        az = 0 
         ay = -9.8  
         t = 0.08
         d = np.radians(70) 
 
         M = []
 
-        vx = v * np.cos(d)
+        vx = v * np.tan(np.radians(degree))
+        vz = v * np.cos(d)
         vy = v * np.sin(d)
-        vz = v * np.tan(np.radians(degree))
 
         while True:
             x = x + vx*t
-            y = y + vy*t + 0.5*ay*(t**2)
             z = z + vz*t
-            vx = vx + ax*t
-            vy = vy + ay*t
-            vz = vz + az*t
+            y = y + vy*t + 0.5*ay*(t**2)
 
-            if y < FLOOR:
+            vx = vx + ax*t
+            vz = vz + az*t
+            vy = vy + ay*t
+
+            if y < self.floor:
                 break
+
             M.append([x,y,z])
         return M
+
 
     def perform_jump(self, movementPath):
         path = []
         for a in movementPath:
             x,y,z = a[0],a[1],a[2]
             path.append("tp {} {} {}".format(round(x,4),round(y,4), round(z,4)))
+        
+        self.XPos = x
+        self.YPos = y
+        self.ZPos = z
         return path
+
 
     def step(self, action):
         """
         Take an action in the environment and return the results.
-
         Args
             action: <int> index of the action to take
-
         Returns
             observation: <np.array> flattened array of obseravtion
             reward: <int> reward from taking action
             done: <bool> indicates terminal state
             info: <dict> dictionary of extra information
-        """
+        """ 
 
-        time.sleep(1)
         velocity_diff = self.velocity_max-self.velocity_min 
-        velocity = self.velocity_min + velocity_diff * action[0]  
-        degree = round(-50 + 100 * action[1])
-        movements = self.movement(velocity, self.XPos, self.YPos, self.ZPos, degree)
+        self.velocity = self.velocity_min + (velocity_diff * action[0])
+        self.degree = round(-5 + 10 * action[1],4)
+        movements = self.movement(self.velocity, self.XPos, self.YPos, self.ZPos, self.degree)
         commands = self.perform_jump(movements)
 
-        self.XPos = movements[-1][0]
-        self.YPos = movements[-1][1]
-        self.ZPos = movements[-1][2]
+        # for c in commands:
+        #     self.agent_host.sendCommand(c)
+        #     time.sleep(0.05)
 
-        print()
-        print("action: ", action)
-        print("Velocity: ", velocity)
-        print("Degree: ", degree)
-        print()
-        for c in commands:
-            self.agent_host.sendCommand(c)
-            print(c)
-            time.sleep(0.05)
+        self.agent_host.sendCommand(commands[-1])
+        time.sleep(2)
         self.episode_step += 1
-
+        self.cur_step += 1
 
         # Get Done
         done = False
@@ -280,22 +212,106 @@ class PixelJump(gym.Env):
             print("Error:", error.text)
         self.obs = self.get_observation(world_state) 
 
+        # obs = self.obs.flatten()
+        # obs.append(self.relative_pos)
+
+
         # Get Reward
         reward = 0
         score = 0
+        diff = -1
         for r in world_state.rewards:
             score = r.getValue()
+            if score == self.goal_reward:
+                diff = 0
+            elif score == self.penalty:
+                done = True
+            else: # if score != self.penalty and score != self.goal_reward:
+                diff = np.sqrt( (self.XPos-self.relative_pos_x)**2 + (self.ZPos-self.relative_pos_z)**2)
+                score = np.abs(round((1-(diff/10)) * (self.goal_reward-20), 4))
             reward += score
+        self.episode_score.append(reward)
         self.episode_return += reward
-        print("Episode " + str(self.episode_step) + ": " + str(self.episode_return))
-        
-        if score == -200:
-            done = True
+        #int("Episode " + str(self.episode_step) + ": " + str(self.episode_return))
 
-#         if score == -200:
-#             self.reset()
+        print("\nStep: {}".format(self.cur_step))
+        print("Step Score: {}".format(score))
+        print("Velocity: {}".format(self.velocity))
+        print("Degree: {}".format(self.degree))
+        print("Relative distance: {}\n".format(diff))
 
+        # if score == self.penalty:
+        #     done = True
+            
         return self.obs.flatten(), reward, done, dict()
+
+
+    def get_observation(self, world_state):
+        """
+        Use the agent observation API to get a 2 x 5 x 5 grid around the agent. 
+        The agent is in the center square facing up.
+        Args
+            world_state: <object> current agent world state
+        Returns
+            observation: <np.array>
+        """
+        obs = np.zeros((self.obs_size_z, self.obs_size_x))
+
+        while world_state.is_mission_running:
+            time.sleep(0.1)
+            world_state = self.agent_host.getWorldState()
+            if len(world_state.errors) > 0:
+                raise AssertionError('Could not load grid.')
+
+            if world_state.number_of_observations_since_last_state > 0:
+                # First we get the json from the observation API
+                msg = world_state.observations[-1].text
+                observations = json.loads(msg)
+
+                # Get observation
+                grid = observations['self.floorAll']
+
+                row = 0
+                blocks = 0
+                platform_row = 0
+                self.relative_pos = -1
+
+
+                num_zero = 0
+
+
+                grid_trinary = []
+                for x in grid:        
+                    blocks += 1
+                    if blocks%5 == 0:
+                        row += 1
+                    if row > 2 and row-platform_row <= 3:
+                        if x in self.block_types:
+                            grid_trinary.append(1)
+                            if platform_row == 0:
+                                platform_row = row
+                        elif x == "glass":
+                            grid_trinary.append(2)
+                            self.relative_pos_x = np.abs(blocks%5/2)
+                            self.relative_pos_z = row+1
+                        else:
+                            grid_trinary.append(0)
+                            num_zero += 1
+                    else:
+                        grid_trinary.append(0)
+                        num_zero += 1
+
+                if self.relative_pos_z + self.relative_pos_x > 0:
+                    self.relative_pos = np.sqrt( self.relative_pos_x**2 + self.relative_pos_z**2 )
+
+                obs = np.reshape(grid_trinary, (self.obs_size_z, self.obs_size_x))
+
+                if num_zero < 50:
+                    print(obs)
+
+                break   
+
+        return obs
 
     def init_malmo(self):
         """
@@ -330,52 +346,99 @@ class PixelJump(gym.Env):
 
         return world_state
 
-    def get_observation(self, world_state):
-        """
-        Use the agent observation API to get a 2 x 5 x 5 grid around the agent. 
-        The agent is in the center square facing up.
+    def get_mission_xml(self):
 
-        Args
-            world_state: <object> current agent world state
+        # Starting platform
+        xml = "<DrawCuboid x1='0' x2='2' y1='2' y2='2' z1='0' z2='2' type='stone'/>"
 
-        Returns
-            observation: <np.array>
-        """
-        obs = np.zeros((self.obs_size_z, self.obs_size_x))
+        z = 2 + random.randint(self.gap_min, self.gap_max) + 2 # first platform 
+        x = 1
 
-        while world_state.is_mission_running:
-            time.sleep(0.1)
-            world_state = self.agent_host.getWorldState()
-            if len(world_state.errors) > 0:
-                raise AssertionError('Could not load grid.')
+        platform_index = 1
+        max_platform = 50
 
-            if world_state.number_of_observations_since_last_state > 0:
-                # First we get the json from the observation API
-                msg = world_state.observations[-1].text
-                observations = json.loads(msg)
-                
-                # Get observation
-                grid = observations['self.floorAll']
-                grid_trinary = []
-                for x in grid:
-                    if x in self.block_types:
-                        grid_trinary.append(1)
-                    elif x == "glass":
-                        grid_trinary.append(2)
-                    else:
-                        grid_trinary.append(0)
-   
-                obs = np.reshape(grid_binary, (self.obs_size_z, self.obs_size_x))
-    
-                break
-        print(obs)
+        density = self.block_density * 2
+        
+        while platform_index < max_platform:
+            block = random.choice(self.block_types)
 
-        return obs
+            if platform_index > 10:
+                density = self.block_density
+            num_blocks = 0
+            arr = [1, 0, -1]
+            for i in range(3):
+                for j in range(3):
+                    if random.random() < density:
+                        xml += "<DrawBlock x='{}' y='2' z='{}' type='{}'/>".format(x+arr[j], z+arr[i], block)
+                        num_blocks += 1
+
+            # Center block
+            if random.random() < self.goal_block_density:
+                xml += "<DrawBlock x='{}' y='2' z='{}' type='glass'/>".format(x+random.choice(arr), z+random.choice(arr))
+            else:
+                if num_blocks == 0:
+                    xml += "<DrawBlock x='{}' y='2' z='{}' type='{}'/>".format(x+random.choice(arr), z+random.choice(arr), block)
+
+            # else:
+            z += random.randint(self.gap_min, self.gap_max) + 3
+            platform_index += 1
+
+
+        return '''<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+                <Mission xmlns="http://ProjectMalmo.microsoft.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                    <About>
+                        <Summary>Jump Jump Jump!</Summary>
+                    </About>
+                    <ServerSection>
+                        <ServerInitialConditions>
+                            <Time>
+                                <StartTime>12000</StartTime>
+                                <AllowPassageOfTime>true</AllowPassageOfTime>
+                            </Time>
+                            <Weather>clear</Weather>
+                        </ServerInitialConditions>
+                        <ServerHandlers>
+                            <FlatWorldGenerator generatorString="3;7,2;1;"/>
+                            <DrawingDecorator>''' +\
+                                "<DrawCuboid x1='{}' x2='{}' y1='2' y2='2' z1='{}' z2='{}' type='air'/>".format(-50, self.size, -50, self.size) + \
+                                "<DrawCuboid x1='{}' x2='{}' y1='1' y2='1' z1='{}' z2='{}' type='lava'/>".format(-50, 50, -50, 50) + \
+                                xml +\
+                                '''
+                            </DrawingDecorator>
+                            <ServerQuitWhenAnyAgentFinishes/>
+                        </ServerHandlers>
+                    </ServerSection>
+
+                    <AgentSection mode="Survival">
+                        <Name>James Bond</Name>
+                        <AgentStart>
+                            <Placement x="1.5" y="3" z="1.5" pitch="0" yaw="0"/>
+                        </AgentStart>
+                        <AgentHandlers>
+                            <RewardForTouchingBlockType>
+                                <Block type='glass' reward="'''+str(int(self.goal_reward))+'''" behaviour='onceOnly' />
+                                <Block type='iron_block emerald_block gold_block lapis_block diamond_block redstone_block purpur_block' reward='10' behaviour='onceOnly' />
+                                <Block type='lava' reward="'''+str(int(self.penalty))+'''" behaviour='onceOnly' />
+                            </RewardForTouchingBlockType>
+                            <AbsoluteMovementCommands/>
+                            <DiscreteMovementCommands/>
+                            <ObservationFromFullStats/>
+                            <ObservationFromGrid>
+                                <Grid name="self.floorAll">
+                                    <min x="-'''+str(int(self.obs_size_x/2))+'''" y="-1" z="'''+str(int(self.obs_size_z-self.obs_size_z+1))+'''"/>
+                                    <max x="'''+str(int(self.obs_size_x/2))+'''" y="-1" z="'''+str(int(self.obs_size_z))+'''"/>
+                                </Grid>
+                            </ObservationFromGrid>
+                            <AgentQuitFromReachingCommandQuota total="'''+str(self.max_episode_steps)+'''" />
+                        </AgentHandlers>
+                    </AgentSection>
+                </Mission>'''
+
+
 
     def log_returns(self):
         """
         Log the current returns as a graph and text file
-
         Args:
             steps (list): list of global steps after each episode
             returns (list): list of total return of each episode
@@ -405,4 +468,3 @@ if __name__ == '__main__':
 
     while True:
         print(trainer.train())
-
