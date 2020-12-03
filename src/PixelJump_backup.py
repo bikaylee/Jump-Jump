@@ -42,14 +42,14 @@ class PixelJump(gym.Env):
         self.direction_freq = 0.3 # change frequency density
 
         # Jumping range displacement
-        self.velocity_min = 6.77  # range = 3m (Minimum possible distance)
+        self.velocity_min = 7.81  # range = 4m (Minimum possible distance)
         self.velocity_max = 11.72 # range = 9m (Maximum possible distance)
 
         # Platform block types
         self.block_types = ['iron_block', 'emerald_block', 'gold_block', 'lapis_block', 'diamond_block', 'redstone_block', 'purpur_block']
 
-        self.obs_size_x = 3
-        self.obs_size_z = 11
+        self.obs_size_x = 5
+        self.obs_size_z = 9
         self.max_episode_steps = 100
         self.log_frequency = 10
 
@@ -59,10 +59,11 @@ class PixelJump(gym.Env):
 
         self.velocity = 0
         self.degree = 0
+        self.relative_pos = 0
+        self.midpoint = [0,0]
         
         # Rllib Parameters
-        #self.action_space = Box(0, 10, shape = (2,), dtype = np.float32) # used to determine its degree and the chosne velocity
-        self.action_space = Box(0, 1, shape = (2,), dtype = np.float32) # used to determine its degree and the chosne velocity
+        self.action_space = Box(0, 1, shape=(2,), dtype=np.float32) # used to determine its degree and the chosne velocity
         self.observation_space = Box(0, 2, shape=(np.prod([self.obs_size_x, self.obs_size_z]), ), dtype=np.int32)
 
         # Malmo Parameters
@@ -89,17 +90,14 @@ class PixelJump(gym.Env):
         """
         # Reset Malmo
         world_state = self.init_malmo()
-        time.sleep(0.5)
 
         # Reset Variables
-        
         self.returns.append(self.episode_return)
         current_step = self.steps[-1] if len(self.steps) > 0 else 0
         self.steps.append(current_step + self.episode_step)
 
         l = len(self.returns)
-        if (l > 1):
-                     
+        if (l > 1):         
             print("Step :{}".format(current_step))
             print("Velocity: {}".format(self.velocity))
             print("Degree: {}".format(self.degree))
@@ -109,12 +107,12 @@ class PixelJump(gym.Env):
 
         self.episode_return = 0
         self.episode_step = 0
+
         self.XPos = 1.5
         self.YPos = 3
         self.ZPos = 1.5
-
-        
-        
+        self.relative_pos = 0
+        self.midpoint = [0,0]
 
         # Log
         if len(self.returns) > self.log_frequency and \
@@ -127,22 +125,25 @@ class PixelJump(gym.Env):
         return self.obs.flatten()
 
     
-    def movement (self, v, x ,y, z, degree):
+    def movement (self, v, x, y, z, degree):
+        ax = 0
         az = 0 
         ay = -9.8  
-        t = 0.08
+        t = 0.1
         d = np.radians(70) 
 
         M = []
 
+        vx = v * np.tan(np.radians(degree))
         vz = v * np.cos(d)
         vy = v * np.sin(d)
-        vx = v * np.tan(np.radians(degree))
 
         while True:
+            x = x + vx*t
             z = z + vz*t
             y = y + vy*t + 0.5*ay*(t**2)
-            x = x + vx*t 
+
+            vx = vx + ax*t
             vz = vz + az*t
             vy = vy + ay*t
 
@@ -150,17 +151,15 @@ class PixelJump(gym.Env):
                 break
 
             M.append([x,y,z])
-        
         return M
 
 
     def perform_jump(self, movementPath):
         path = []
-        x,y,z = 0,0,0
         for a in movementPath:
             x,y,z = a[0],a[1],a[2]
             path.append("tp {} {} {}".format(round(x,4),round(y,4), round(z,4)))
-
+        
         self.XPos = x
         self.YPos = y
         self.ZPos = z
@@ -178,24 +177,21 @@ class PixelJump(gym.Env):
             done: <bool> indicates terminal state
             info: <dict> dictionary of extra information
         """ 
-
-        # time.sleep(1)
-        # degree = (10-action[0]) * random.choice([-10, 10])
-        # velocity = action[1]
-
-        self.velocity = self.velocity_min + (self.velocity_max - self.velocity_min) * action[0]
-        self.degree = -50 + 100 * action[1]
-        
+        velocity_diff = self.velocity_max - self.velocity_min 
+        self.velocity = self.velocity_min + velocity_diff * action[0]  
+        # self.velocity = self.velocity_min
+        #self.degree = round(-50 + 100 * action[1])
+        original_z = self.ZPos
+        original_x = self.XPos
         movements = self.movement(self.velocity, self.XPos, self.YPos, self.ZPos, self.degree)
         commands = self.perform_jump(movements)
 
-
-        for c in commands:
-            self.agent_host.sendCommand(c)
-            # print(c)
-            time.sleep(0.05)
+        # for c in commands:
+        #     self.agent_host.sendCommand(c)
+        #     time.sleep(0.05)
+        self.agent_host.sendCommand(commands[-1])
         self.episode_step += 1
-        time.sleep(0.5)
+        time.sleep(1)
 
         # Get Done
         done = False
@@ -212,22 +208,48 @@ class PixelJump(gym.Env):
         # Get Reward
         reward = 0
         score = 0
+
+        displace_x = self.XPos - original_x
+        displace_z = self.ZPos - original_z
+
+        
+        if (displace_z > self.midpoint[0] + 1):
+            reward += (displace_z - self.midpoint[0] + 1) * -4
+        elif (displace_z < self.midpoint[0] - 1):
+            reward += (self.midpoint[0] - 1 - displace_z) * -4
+        else:
+            reward += 3
+
+        if (displace_x > self.midpoint[1] + 1):
+            reward += (displace_x - self.midpoint[1] + 1) * -4
+        elif (displace_x < self.midpoint[1] - 1):
+            reward += (self.midpoint[1] - 1 - displace_x) * -4
+        else:
+            reward += 3
+
+        
+
+
+
+
         for r in world_state.rewards:
             score = r.getValue()
             reward += score
         self.episode_return += reward
-        # print("Episode " + str(self.episode_step) + ": " + str(self.episode_return))
-        # print()
+        #print("Episode " + str(self.episode_step) + ": " + str(self.episode_return))
+        print("score: ", score)
 
-        if score == -5:
+        if score == -10:
             done = True
+            time.sleep(1)
+            
 
         return self.obs.flatten(), reward, done, dict()
 
 
     def get_observation(self, world_state):
         """
-        Use the agent observation API to get a 2 x 5 x 5 grid around the agent. 
+        Use the agent observation API to get a 5 x 10 grid around the agent. 
         The agent is in the center square facing up.
         Args
             world_state: <object> current agent world state
@@ -249,20 +271,71 @@ class PixelJump(gym.Env):
 
                 # Get observation
                 grid = observations['self.floorAll']
-                # print(grid)
                 grid_trinary = []
-                for x in grid:
-                    if x in self.block_types:
-                        grid_trinary.append(1)
-                    elif x == "glass":
-                        grid_trinary.append(2)
-                    else:
-                        grid_trinary.append(0)
-   
+
+                platform_remaining_size = 3
+                i = 0
+                prev_platform = True
+                first_platform = False
+                platform_blocks = []
+                for z in range(self.obs_size_z):
+                    row = 0
+                    for x in range(self.obs_size_x):
+                        blcok = grid[i]
+                        if (prev_platform):
+                            if (blcok in self.block_types or blcok == "glass" or blcok == "stone"):
+                                grid_trinary.append(1)
+                                row += 1
+                            else:
+                                grid_trinary.append(0)
+                                row += 0       
+                        else:              
+                            if (platform_remaining_size != 0):
+                                if (blcok in self.block_types):
+                                    grid_trinary.append(1)
+                                    if (not first_platform):
+                                        first_platform = True
+                                elif blcok == "glass":
+                                    grid_trinary.append(2)
+                                else:
+                                    grid_trinary.append(0)
+                                platform_blocks.append([z,x])
+                            else:
+                                grid_trinary.append(0)
+                        i += 1
+
+                    if (prev_platform and row == 0):
+                        prev_platform = False
+                    if (first_platform and platform_remaining_size != 0):
+                        platform_remaining_size -= 1
+                
+                # i = 0
+                # p = []
+                # for x in grid_trinary:
+                #     p.append(x)
+                #     i += 1
+                #     if (i % 5 == 0):
+                #         i=0
+                #         print(p)
+                #         p=[]
+                size = len(platform_blocks)
+                self.midpoint = np.sum(platform_blocks, axis = 0)/size
+                # self.relative_pos = np.sqrt((midpoint[0] - -1)**2 + (midpoint[1] - 1)**2)
+              
+
+                
+
                 obs = np.reshape(grid_trinary, (self.obs_size_x, self.obs_size_z))
-                # print(obs)
+            
+                
 
                 break
+
+        # print(obs)
+
+        #calculate midpoint
+
+
 
         return obs
 
@@ -275,7 +348,7 @@ class PixelJump(gym.Env):
         my_mission.requestVideo(800, 500)
         my_mission.setViewpoint(1)
 
-        max_retries = 5
+        max_retries = 3
         my_clients = MalmoPython.ClientPool()
         my_clients.add(MalmoPython.ClientInfo('127.0.0.1', 10000)) # add Minecraft machines here as available
 
@@ -309,15 +382,20 @@ class PixelJump(gym.Env):
 
         platform_index = 1
         max_platform = 50
+
+        density = self.block_density * 2
         
+
         while platform_index < max_platform:
             block = random.choice(self.block_types)
 
+            if platform_index > 10:
+                density = self.block_density
             num_blocks = 0
             arr = [1, 0, -1]
             for i in range(3):
                 for j in range(3):
-                    if random.random() < self.block_density:
+                    if random.random() < density:
                         xml += "<DrawBlock x='{}' y='2' z='{}' type='{}'/>".format(x+arr[j], z+arr[i], block)
                         num_blocks += 1
 
@@ -349,8 +427,8 @@ class PixelJump(gym.Env):
                         <ServerHandlers>
                             <FlatWorldGenerator generatorString="3;7,2;1;"/>
                             <DrawingDecorator>''' +\
-                                "<DrawCuboid x1='{}' x2='{}' y1='2' y2='2' z1='{}' z2='{}' type='air'/>".format(-50, self.size, -50, self.size) + \
-                                "<DrawCuboid x1='{}' x2='{}' y1='1' y2='1' z1='{}' z2='{}' type='lava'/>".format(-50, self.size, -50, self.size) + \
+                                "<DrawCuboid x1='{}' x2='{}' y1='2' y2='2' z1='{}' z2='{}' type='air'/>".format(-10, 10, -5, self.size) + \
+                                "<DrawCuboid x1='{}' x2='{}' y1='1' y2='1' z1='{}' z2='{}' type='lava'/>".format(-10, 10, -5, self.size) + \
                                 xml +\
                                 '''
                             </DrawingDecorator>
@@ -365,20 +443,19 @@ class PixelJump(gym.Env):
                         </AgentStart>
                         <AgentHandlers>
                             <RewardForTouchingBlockType>
-                                <Block type='glass' reward='80' />
-                                <Block type='iron_block emerald_block gold_block lapis_block diamond_block redstone_block purpur_block' reward='10' />
-                                <Block type='lava' reward='-5' behaviour='onceOnly' />
+                                <Block type='glass' reward='100' />
+                                <Block type='iron_block emerald_block gold_block lapis_block diamond_block redstone_block purpur_block' reward='50' />
+                                <Block type='lava' reward='-10' behaviour='onceOnly' />
                             </RewardForTouchingBlockType>
                             <AbsoluteMovementCommands/>
                             <DiscreteMovementCommands/>
                             <ObservationFromFullStats/>
                             <ObservationFromGrid>
                                 <Grid name="self.floorAll">
-                                    <min x="-1" y="-1" z="0"/>
-                                    <max x="1" y="-1" z="10"/>
+                                    <min x="-2" y="-1" z="1"/>
+                                    <max x="'''+str(int(self.obs_size_x/2))+'''" y="-1" z="'''+str(int(self.obs_size_z))+'''"/>
                                 </Grid>
                             </ObservationFromGrid>
-                         
                             <AgentQuitFromReachingCommandQuota total="'''+str(self.max_episode_steps)+'''" />
                         </AgentHandlers>
                     </AgentSection>
