@@ -189,7 +189,7 @@ class PixelJump(gym.Env):
 
         velocity_diff = self.velocity_max-self.velocity_min 
         self.velocity = self.velocity_min + (velocity_diff * action[0])
-        #self.degree = round(-5 + 10 * action[1],4)
+        self.degree = round(-5 + 10 * action[1],4)
         movements = self.movement(self.velocity, self.XPos, self.YPos, self.ZPos, self.degree)
         commands = self.perform_jump(movements)
 
@@ -231,7 +231,7 @@ class PixelJump(gym.Env):
                 done = True
             else: # if score != self.penalty and score != self.goal_reward:
                 diff = np.sqrt( (step_pos_x-self.relative_pos_x)**2 + (step_pos_z-self.relative_pos_z)**2)
-                score = np.abs(round((1-(diff/10)) * (self.goal_reward-20), 4))
+                score = np.abs(round((1-(diff/10)) * (self.goal_reward-50), 4))
             reward += score
         self.episode_score.append(reward)
         self.episode_return += reward
