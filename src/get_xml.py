@@ -10,7 +10,8 @@ def get_mission_xml(self):
     max_platform = 50
 
     density = self.block_density * 2
-    if (self.difficulty == 1):
+
+    if self.difficulty == 1:
         while platform_index < max_platform:
             block = random.choice(self.block_types)
             num_blocks = 0
@@ -27,7 +28,7 @@ def get_mission_xml(self):
             z += random.randint(self.gap_min, self.gap_max) + 3
             platform_index += 1
 
-    if (self.difficulty == 2):
+    if self.difficulty == 2:
         while platform_index < max_platform:
             block = random.choice(self.block_types)
 
@@ -47,7 +48,7 @@ def get_mission_xml(self):
             platform_index += 1
 
 
-    if (self.difficulty == 3):
+    if self.difficulty == 3:
         
         while platform_index < max_platform:
             block = random.choice(self.block_types)
@@ -91,7 +92,7 @@ def get_mission_xml(self):
                         <FlatWorldGenerator generatorString="3;7,2;1;"/>
                         <DrawingDecorator>''' +\
                             "<DrawCuboid x1='{}' x2='{}' y1='2' y2='2' z1='{}' z2='{}' type='air'/>".format(-50, self.size, -50, self.size) + \
-                            "<DrawCuboid x1='{}' x2='{}' y1='1' y2='1' z1='{}' z2='{}' type='lava'/>".format(-50, 50, -50, 50) + \
+                            "<DrawCuboid x1='{}' x2='{}' y1='1' y2='1' z1='{}' z2='{}' type='lava'/>".format(-50, 50, -50, self.size) + \
                             xml +\
                             '''
                         </DrawingDecorator>
@@ -105,8 +106,8 @@ def get_mission_xml(self):
                     </AgentStart>
                     <AgentHandlers>
                         <RewardForTouchingBlockType>
-                            <Block type='glass' reward="'''+str(int(self.goal_reward))+'''" behaviour='onceOnly' />
-                            <Block type='iron_block emerald_block gold_block lapis_block diamond_block redstone_block purpur_block' reward='10' behaviour='onceOnly' />
+                            <Block type='glass' reward="'''+str(int(self.goal_reward))+'''" />
+                            <Block type='iron_block emerald_block gold_block lapis_block diamond_block redstone_block purpur_block' reward='10' />
                             <Block type='lava' reward="'''+str(int(self.penalty))+'''" behaviour='onceOnly' />
                         </RewardForTouchingBlockType>
                         <AbsoluteMovementCommands/>
