@@ -60,6 +60,9 @@ class PixelJump(gym.Env):
         self.relative_pos = -1
         self.relative_pos_x = 0
         self.relative_pos_z = 0
+        self.episode_distance = 0
+        self.episode_distances = []
+        self.relative_differences = []
 
         self.penalty = -1
         self.goal_reward = 100
@@ -101,6 +104,7 @@ class PixelJump(gym.Env):
         self.returns.append(self.episode_return)
         self.current_step = self.steps[-1] if len(self.steps) > 0 else 0
         self.steps.append(self.current_step + self.episode_step)
+        self.episode_distances.append(self.episode_distance)
 
         l = len(self.returns)
         e = len(self.episode_score)
@@ -113,6 +117,7 @@ class PixelJump(gym.Env):
         self.episode_return = 0
         self.episode_step = 0
         self.episode_score = []
+        self.episode_distance = 0
 
         self.XPos = 1.5
         self.YPos = 3
@@ -222,16 +227,18 @@ class PixelJump(gym.Env):
         step_pos_x = self.XPos - step_pos_x
         reward = 0
         score = 0
-        diff = -1
+        diff = np.sqrt( (step_pos_x-self.relative_pos_x)**2 + (step_pos_z-self.relative_pos_z)**2)
+        self.relative_differences.append(diff)
         for r in world_state.rewards:
             score = r.getValue()
             if score == self.goal_reward:
                 diff = 0
+                self.episode_distance += 1
             elif score == self.penalty:
                 done = True
             else: # if score != self.penalty and score != self.goal_reward:
-                diff = np.sqrt( (step_pos_x-self.relative_pos_x)**2 + (step_pos_z-self.relative_pos_z)**2)
                 score = np.abs(round((1-(diff/10)) * (self.goal_reward-50), 4))
+                self.episode_distance += 1
             reward += score
         self.episode_score.append(reward)
         self.episode_return += reward
@@ -461,6 +468,20 @@ class PixelJump(gym.Env):
         plt.ylabel('Return')
         plt.xlabel('Steps')
         plt.savefig('returns.png')
+        
+        plt.clf()
+        plt.plot(range(self.episode), self.episode_distances)
+        plt.title('Pixel Jump Ep Distance')
+        plt.ylabel('Distances')
+        plt.xlabel('Episodes')
+        plt.savefig('distance_returns.png')
+
+        plt.clf()
+        plt.plot(range(1,self.steps[-1]+1), self.relative_differences)
+        plt.title('Pixel Jump Relative Differences')
+        plt.ylabel('Difference')
+        plt.xlabel('Step')
+        plt.savefig('differences_returns.png')
 
         with open('returns.txt', 'w') as f:
             for step, value in zip(self.steps, self.returns):
