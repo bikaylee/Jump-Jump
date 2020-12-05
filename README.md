@@ -5,10 +5,10 @@ CS175 Fall 2020
 Our AI project is a Jump & Jump gameplay simulation in Minecraft, with different sizes and shapes of platform for the agent to jump on based on gravity and velocity. 
 
 ---
-#### Website
+### Website
 https://bikaylee.github.io/Pixel-Jump/.
 
-#### Basics 
+### Basics 
 - [x] Classical Mechanics
 - [ ] Reinforcement Learning
 - [ ] Proximal Policy Optimization
