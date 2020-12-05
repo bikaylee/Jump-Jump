@@ -66,7 +66,7 @@ class PixelJump(gym.Env):
 
         # Rllib Parameters
         self.action_space = Box(0, 1, shape=(2,), dtype=np.float32) # used to determine its degree and the chosne velocity
-        self.observation_space = Box(0, 2, shape=(np.prod([self.obs_size_z, self.obs_size_x]), ), dtype=np.float32)
+        self.observation_space = Box(0, 1, shape=(np.prod([2, self.obs_size_z, self.obs_size_x]), ), dtype=np.int32)
 
         # Malmo Parameters
         self.agent_host = MalmoPython.AgentHost()
@@ -261,7 +261,7 @@ class PixelJump(gym.Env):
         Returns
             observation: <np.array>
         """
-        obs = np.zeros((self.obs_size_z, self.obs_size_x))
+        obs = np.zeros((2,self.obs_size_z, self.obs_size_x))
 
         while world_state.is_mission_running:
             time.sleep(0.1)
@@ -282,35 +282,38 @@ class PixelJump(gym.Env):
                 platform_row = 0
                 self.relative_pos = -1
 
-
                 num_zero = 0
 
-
-                grid_trinary = []
+                grid_blocks = []
+                grid_glass = []
                 for x in grid:        
                     blocks += 1
                     if blocks%5 == 0:
                         row += 1
-                    if row > 2 and row-platform_row <= 3:
+                    if row > 2 and (row-platform_row <= 3 or platform_row == 0):
                         if x in self.block_types:
-                            grid_trinary.append(1)
+                            grid_glass.append(0)
+                            grid_blocks.append(1)
                             if platform_row == 0:
                                 platform_row = row
                         elif x == "glass":
-                            grid_trinary.append(2)
+                            grid_blocks.append(1)
+                            grid_glass.append(1)
                             self.relative_pos_x = np.abs(blocks%5/2)
                             self.relative_pos_z = row+1
                         else:
-                            grid_trinary.append(0)
+                            grid_blocks.append(0)
+                            grid_glass.append(0)
                             num_zero += 1
                     else:
-                        grid_trinary.append(0)
+                        grid_blocks.append(0)
+                        grid_glass.append(0)
                         num_zero += 1
 
                 if self.relative_pos_z + self.relative_pos_x > 0:
                     self.relative_pos = np.sqrt( self.relative_pos_x**2 + self.relative_pos_z**2 )
 
-                obs = np.reshape(grid_trinary, (self.obs_size_z, self.obs_size_x))
+                obs = np.reshape(grid_blocks+grid_glass, (2, self.obs_size_z, self.obs_size_x))
 
                 if num_zero < 50:
                     print()
