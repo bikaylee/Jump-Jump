@@ -3,7 +3,7 @@ layout: default
 title:  Team
 ---
 
-# Team QQQ
+# Team 
 
 ## Bixia Deng
 ***UCI Net ID***: bixiad
