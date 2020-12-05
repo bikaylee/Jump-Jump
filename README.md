@@ -41,4 +41,5 @@ Physics
 Machine Learning Algorithm
 - https://en.wikipedia.org/wiki/Q-learning
 - https://towardsdatascience.com/a-beginners-guide-to-q-learning-c3e2a30a653c
+- https://spinningup.openai.com/en/latest/algorithms/ppo.html
 
