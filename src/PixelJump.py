@@ -303,7 +303,7 @@ class PixelJump(gym.Env):
                     blocks += 1
                     if blocks%5 == 0:
                         row += 1
-                    if row > 3 and (row-platform_row <= 3 or platform_row == 0):
+                    if row > 2 and (row-platform_row <= 3 or platform_row == 0):
                         if x in self.block_types:
                             grid_glass.append(0)
                             grid_blocks.append(1)
