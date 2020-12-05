@@ -14,9 +14,9 @@ https://bikaylee.github.io/Pixel-Jump/.
 - [ ] Proximal Policy Optimization
 
 #### Level of Difficulty 
-- 1: "Easy"   3x3 platform consists of 9 blocks with goal block centered and without turning degree 
-- 2: "Medium" 3x3 platform consists of 9 blocks with goal randomly shown on z-axis and without turning degree
-- 3: "Hard"   3x3 platfrom consists of 1 to 9 blocks with goal block randomly shown at any blocks and with turning degree
+1: "Easy"   3x3 platform consists of 9 blocks with goal block centered and without turning degree 
+2: "Medium" 3x3 platform consists of 9 blocks with goal randomly shown on z-axis and without turning degree
+3: "Hard"   3x3 platfrom consists of 1 to 9 blocks with goal block randomly shown at any blocks and with turning degree
 
 #### Observation 
 Agent will be able to observe all block types on the next platorm by two return lists of 0s and 1s.  
