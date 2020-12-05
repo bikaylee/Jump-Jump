@@ -10,8 +10,8 @@ https://bikaylee.github.io/Pixel-Jump/.
 
 ### Basics 
 - [x] Classical Mechanics
-- [ ] Reinforcement Learning
-- [ ] Proximal Policy Optimization
+- [x] Reinforcement Learning
+- [x] Proximal Policy Optimization
 
 #### Level of Difficulty 
 1: "Easy"   3x3 platform consists of 9 blocks with goal block centered and without turning degree <br>
