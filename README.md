@@ -36,6 +36,7 @@ Physics
 - https://en.wikipedia.org/wiki/Classical_mechanics
 - https://courses.lumenlearning.com/physics/chapter/3-4-projectile-motion/
 - https://www.omnicalculator.com/physics/projectile-motion
+- https://people.physics.tamu.edu/mahapatra/teaching/ch3.pdf
 
 Machine Learning Algorithm
 - https://en.wikipedia.org/wiki/Q-learning
