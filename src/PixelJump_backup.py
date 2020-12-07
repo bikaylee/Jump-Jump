@@ -5,6 +5,7 @@ try:
 except:
     import MalmoPython
 
+import get_xml as GM
 import sys
 import time
 import json
@@ -23,11 +24,10 @@ class PixelJump(gym.Env):
 
     def __init__(self, env_config):  
         # Static Parameters
-
-        self.floor = 3
-
         # Map size
         self.size = 300
+        self.floor = 3
+        self.difficulty = 3
         
         # Gap size between each platfrom
         self.gap_min = 2
@@ -42,16 +42,16 @@ class PixelJump(gym.Env):
         self.direction_freq = 0.3 # change frequency density
 
         # Jumping range displacement
-        self.velocity_min = 7.81  # range = 4m (Minimum possible distance)
+        self.velocity_min =  7.81 # range = 4m (Minimum possible distance)
         self.velocity_max = 11.72 # range = 9m (Maximum possible distance)
 
         # Platform block types
         self.block_types = ['iron_block', 'emerald_block', 'gold_block', 'lapis_block', 'diamond_block', 'redstone_block', 'purpur_block']
 
         self.obs_size_x = 5
-        self.obs_size_z = 9
-        self.max_episode_steps = 100
-        self.log_frequency = 10
+        self.obs_size_z = 10
+        self.max_episode_steps = 50
+        self.log_frequency = 200
 
         self.XPos = 1.5
         self.YPos = 3
@@ -59,13 +59,19 @@ class PixelJump(gym.Env):
 
         self.velocity = 0
         self.degree = 0
-        self.relative_pos = 0
-        self.midpoint = [0,0]
-        # self.total_steps = 0
-        
+        self.relative_pos = -1
+        self.relative_pos_x = 0
+        self.relative_pos_z = 0
+        self.episode_distance = 0
+        self.episode_distances = []
+        self.relative_differences = []
+
+        self.penalty = -5
+        self.goal_reward = 50
+
         # Rllib Parameters
         self.action_space = Box(0, 1, shape=(2,), dtype=np.float32) # used to determine its degree and the chosne velocity
-        self.observation_space = Box(0, 2, shape=(np.prod([self.obs_size_x, self.obs_size_z]), ), dtype=np.int32)
+        self.observation_space = Box(0, 1, shape=(np.prod([2, self.obs_size_z, self.obs_size_x]), ), dtype=np.int32)
 
         # Malmo Parameters
         self.agent_host = MalmoPython.AgentHost()
@@ -82,6 +88,10 @@ class PixelJump(gym.Env):
         self.episode_return = 0
         self.returns = []
         self.steps = []
+        self.current_step = 0
+        self.episode = 0
+        self.episode_score = []
+        self.cur_step = 0
 
     def reset(self):
         """
@@ -94,28 +104,30 @@ class PixelJump(gym.Env):
 
         # Reset Variables
         self.returns.append(self.episode_return)
-        current_step = self.steps[-1] if len(self.steps) > 0 else 0
-        self.steps.append(current_step + self.episode_step)
+        self.current_step = self.steps[-1] if len(self.steps) > 0 else 0
+        self.steps.append(self.current_step + self.episode_step)
+        self.episode_distances.append(self.episode_distance)
 
         l = len(self.returns)
-        if (l > 1):         
-              
-            print("Episode {} return: {}".format(len(self.returns)-1, self.episode_return))
-            print("Avg Ep return: {}".format(sum(self.returns)/(l-1)))
-            print("Avg Step return: {}".format(sum(self.returns)/self.steps[-1]))
+        e = len(self.episode_score)
+        if l > 1 and e > 0:     
+            print("Episode {} return: {}".format(self.episode, sum(self.episode_score)/e))
+            print("Avg return: {}".format(sum(self.returns)/(l-1)))
+            print("========================================================")    
 
-            print("========================================================\n")  
-
-
-
+        self.episode += 1
         self.episode_return = 0
         self.episode_step = 0
+        self.episode_score = []
+        self.episode_distance = 0
 
         self.XPos = 1.5
         self.YPos = 3
         self.ZPos = 1.5
-        self.relative_pos = 0
-        self.midpoint = [0,0]
+        self.relative_pos = -1
+        self.relative_pos_x = 0
+        self.relative_pos_z = 0
+
 
         # Log
         if len(self.returns) > self.log_frequency and \
@@ -185,28 +197,40 @@ class PixelJump(gym.Env):
             done: <bool> indicates terminal state
             info: <dict> dictionary of extra information
         """ 
-        velocity_diff = self.velocity_max - self.velocity_min 
-        self.velocity = self.velocity_min + velocity_diff * action[0]  
-        # self.velocity = self.velocity_min
-        #self.degree = round(-50 + 100 * action[1])
-        original_z = self.ZPos
-        original_x = self.XPos
+        step_pos_x = self.XPos
+        step_pos_z = self.ZPos
+
+        velocity_diff = self.velocity_max-self.velocity_min 
+        self.velocity = self.velocity_min + (velocity_diff * action[0])
+
+
+        left_theta = np.degrees(np.arctan((3-self.XPos) / (self.gap_min+1)))
+        right_theta = np.degrees(np.arctan(self.XPos / (self.gap_min+1)))
+        theta = left_theta + right_theta
+
+        if self.XPos >= 1.5:
+            self.degree = -left_theta + theta * action[1]
+        elif self.XPos < 1.5:
+            self.degree = -right_theta + theta * action[1]
+
+
         movements = self.movement(self.velocity, self.XPos, self.YPos, self.ZPos, self.degree)
         commands = self.perform_jump(movements)
 
         # for c in commands:
-        #     self.agent_host.sendCommand(c)
         #     time.sleep(0.05)
+        #     self.agent_host.sendCommand(c)
+
         self.agent_host.sendCommand(commands[-1])
+        time.sleep(2)
         self.episode_step += 1
-        # self.total_steps += 1
-        time.sleep(1)
+        self.cur_step += 1
 
         # Get Done
         done = False
         if self.episode_step >= self.max_episode_steps:
             done = True
-            time.sleep(2)  
+            time.sleep(1)  
 
         # Get Observation
         world_state = self.agent_host.getWorldState()
@@ -215,68 +239,50 @@ class PixelJump(gym.Env):
         self.obs = self.get_observation(world_state) 
 
         # Get Reward
-        reward = 0
+        step_pos_z = self.ZPos - step_pos_z
+        step_pos_x = self.XPos - step_pos_x
         score = 0
-
-        displace_x = self.XPos - original_x
-        displace_z = self.ZPos - original_z
-
+        self.relative_pos = np.sqrt( (step_pos_x-self.relative_pos_x)**2 + (step_pos_z-self.relative_pos_z)**2)
+        self.relative_differences.append(self.relative_pos)
+        self.episode_distance += 1
         
-        # if (displace_z > self.midpoint[0] + 1):
-        #     reward += (1 - (displace_z - (self.midpoint[0] + 1))) * 1
-        # elif (displace_z < self.midpoint[0] - 1):
-        #     reward += (1 - ((self.midpoint[0] - 1) - displace_z)) * 1
-        # else:
-        #     reward += 1
-
-        # if (displace_x > self.midpoint[1] + 1):
-        #     reward += (1 - (displace_x - (self.midpoint[1] + 1))) * 1
-        # elif (displace_x < self.midpoint[1] - 1):
-        #     reward += (1 - ((self.midpoint[1] - 1) - displace_x)) * 1
-        # else:
-        #     reward += 1
-
-        # print("dx:",displace_x)
-        # print("dz:", displace_z)
-        # print(self.midpoint)
-
-        
-
-        reward += (1.5 - abs(displace_x - self.midpoint[1])) * 2
-        reward += (1.5 - abs(displace_z - self.midpoint[0])) * 2
-        # print("R:",reward)
-       
-
-
         for r in world_state.rewards:
             score = r.getValue()
-            reward += score
-        self.episode_return += reward
+            if score == self.penalty:
+                done = True
+                self.episode_distance -= 1
 
-        
-        print("Ep {} Step: {}".format(len(self.returns), self.episode_step))
+        score -= self.relative_pos
+
+
+        self.episode_score.append(score)
+        self.episode_return += score
+        time.sleep(1)  
+
+        print("\nStep: {}".format(self.cur_step))
+        print("Step Score: {}".format(score))
+
         print("Velocity: {}".format(self.velocity))
-        print("Step Score: {}".format(reward))
-        # print("Degree: {}".format(self.degree))
+        print("Degree:   {}".format(self.degree))
+        # print("Theta:    {}".format(theta))
 
-        if score == -3:
-            done = True
-            time.sleep(1)
+        # print("Current Position: ({},{})".format(round(step_pos_z,2), round(step_pos_x,2)))
+        # print("Glass   Position: ({},{})".format(self.relative_pos_z, self.relative_pos_x))
+        # print("Relative distance: {}\n".format(self.relative_pos))
             
-
-        return self.obs.flatten(), reward, done, dict()
+        return self.obs.flatten(), score, done, dict()
 
 
     def get_observation(self, world_state):
         """
-        Use the agent observation API to get a 5 x 10 grid around the agent. 
+        Use the agent observation API to get a 2 x 5 x 5 grid around the agent. 
         The agent is in the center square facing up.
         Args
             world_state: <object> current agent world state
         Returns
             observation: <np.array>
         """
-        obs = np.zeros((self.obs_size_x, self.obs_size_z))
+        obs = np.zeros((2,self.obs_size_z, self.obs_size_x))
 
         while world_state.is_mission_running:
             time.sleep(0.1)
@@ -291,71 +297,46 @@ class PixelJump(gym.Env):
 
                 # Get observation
                 grid = observations['self.floorAll']
-                grid_trinary = []
 
-                platform_remaining_size = 3
-                i = 0
-                prev_platform = True
-                first_platform = False
-                platform_blocks = []
-                for z in range(self.obs_size_z):
-                    row = 0
-                    for x in range(self.obs_size_x):
-                        blcok = grid[i]
-                        if (prev_platform):
-                            if (blcok in self.block_types or blcok == "glass" or blcok == "stone"):
-                                grid_trinary.append(1)
-                                row += 1
-                            else:
-                                grid_trinary.append(0)
-                                row += 0       
-                        else:              
-                            if (platform_remaining_size != 0):
-                                if (blcok in self.block_types):
-                                    grid_trinary.append(1)
-                                    if (not first_platform):
-                                        first_platform = True
-                                elif blcok == "glass":
-                                    grid_trinary.append(2)
-                                else:
-                                    grid_trinary.append(0)
-                                platform_blocks.append([z,x-2])
-                            else:
-                                grid_trinary.append(0)
-                        i += 1
+                row = 0
+                blocks = 0
+                platform_row = 0
 
-                    if (prev_platform and row == 0):
-                        prev_platform = False
-                    if (first_platform and platform_remaining_size != 0):
-                        platform_remaining_size -= 1
-                
-                # i = 0
-                # p = []
-                # for x in grid_trinary:
-                #     p.append(x)
-                #     i += 1
-                #     if (i % 5 == 0):
-                #         i=0
-                #         print(p)
-                #         p=[]
-                size = len(platform_blocks)
-                self.midpoint = np.sum(platform_blocks, axis = 0)/size
-                # self.relative_pos = np.sqrt((midpoint[0] - -1)**2 + (midpoint[1] - 1)**2)
-              
+                num_zero = 0
 
-                
+                grid_blocks = []
+                grid_glass = []
+                for x in grid:        
+                    blocks += 1
+                    if blocks%5 == 0:
+                        row += 1
+                    if row > 2 and (row-platform_row <= 3 or platform_row == 0):
+                        if x in self.block_types:
+                            grid_glass.append(0)
+                            grid_blocks.append(1)
+                            if platform_row == 0:
+                                platform_row = row
+                        elif x == "glass":
+                            grid_blocks.append(1)
+                            grid_glass.append(1)
+                            self.relative_pos_x = np.abs(blocks%5/2)
+                            self.relative_pos_z = row+1
+                        else:
+                            grid_blocks.append(0)
+                            grid_glass.append(0)
+                            num_zero += 1
+                    else:
+                        grid_blocks.append(0)
+                        grid_glass.append(0)
+                        num_zero += 1
 
-                obs = np.reshape(grid_trinary, (self.obs_size_x, self.obs_size_z))
-            
-                
+                obs = np.reshape(grid_blocks+grid_glass, (2, self.obs_size_z, self.obs_size_x))
 
-                break
+                # if num_zero < 50:
+                #     print()
+                #     print(obs)
 
-        # print(obs)
-
-        #calculate midpoint
-
-
+                break   
 
         return obs
 
@@ -363,7 +344,7 @@ class PixelJump(gym.Env):
         """
         Initialize new malmo mission.
         """
-        my_mission = MalmoPython.MissionSpec(self.get_mission_xml(), True)
+        my_mission = MalmoPython.MissionSpec(GM.get_mission_xml(self), True)
         my_mission_record = MalmoPython.MissionRecordSpec()
         my_mission.requestVideo(800, 500)
         my_mission.setViewpoint(1)
@@ -392,97 +373,6 @@ class PixelJump(gym.Env):
 
         return world_state
 
-    def get_mission_xml(self):
-
-        # Starting platform
-        xml = "<DrawCuboid x1='0' x2='2' y1='2' y2='2' z1='0' z2='2' type='stone'/>"
-
-        z = 2 + random.randint(self.gap_min, self.gap_max) + 2 # first platform 
-        x = 1
-
-        platform_index = 1
-        max_platform = 50
-
-        density = self.block_density * 2
-        
-
-        while platform_index < max_platform:
-            block = random.choice(self.block_types)
-
-            if platform_index > 10:
-                density = self.block_density
-            num_blocks = 0
-            arr = [1, 0, -1]
-            for i in range(3):
-                for j in range(3):
-                    if random.random() < density:
-                        xml += "<DrawBlock x='{}' y='2' z='{}' type='{}'/>".format(x+arr[j], z+arr[i], block)
-                        num_blocks += 1
-
-            # Center block
-            if random.random() < self.goal_block_density:
-                xml += "<DrawBlock x='{}' y='2' z='{}' type='glass'/>".format(x+random.choice(arr), z+random.choice(arr))
-            else:
-                if num_blocks == 0:
-                    xml += "<DrawBlock x='{}' y='2' z='{}' type='{}'/>".format(x+random.choice(arr), z+random.choice(arr), block)
-
-            # else:
-            z += random.randint(self.gap_min, self.gap_max) + 3
-            platform_index += 1
-
-
-        return '''<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-                <Mission xmlns="http://ProjectMalmo.microsoft.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-                    <About>
-                        <Summary>Jump Jump Jump!</Summary>
-                    </About>
-                    <ServerSection>
-                        <ServerInitialConditions>
-                            <Time>
-                                <StartTime>12000</StartTime>
-                                <AllowPassageOfTime>true</AllowPassageOfTime>
-                            </Time>
-                            <Weather>clear</Weather>
-                        </ServerInitialConditions>
-                        <ServerHandlers>
-                            <FlatWorldGenerator generatorString="3;7,2;1;"/>
-                            <DrawingDecorator>''' +\
-                                "<DrawCuboid x1='{}' x2='{}' y1='2' y2='2' z1='{}' z2='{}' type='air'/>".format(-10, 10, -5, self.size) + \
-                                "<DrawCuboid x1='{}' x2='{}' y1='1' y2='1' z1='{}' z2='{}' type='lava'/>".format(-10, 10, -5, self.size) + \
-                                xml +\
-                                '''
-                            </DrawingDecorator>
-                            <ServerQuitWhenAnyAgentFinishes/>
-                        </ServerHandlers>
-                    </ServerSection>
-
-                    <AgentSection mode="Survival">
-                        <Name>James Bond</Name>
-                        <AgentStart>
-                            <Placement x="1.5" y="3" z="1.5" pitch="0" yaw="0"/>
-                        </AgentStart>
-                        <AgentHandlers>
-                            <RewardForTouchingBlockType>
-                                <Block type='glass' reward='10' />
-                                <Block type='iron_block emerald_block gold_block lapis_block diamond_block redstone_block purpur_block' reward='5' />
-                                <Block type='lava' reward='-3' behaviour='onceOnly' />
-                            </RewardForTouchingBlockType>
-                            <AbsoluteMovementCommands/>
-                            <DiscreteMovementCommands/>
-                            <ObservationFromFullStats/>
-                            <ObservationFromGrid>
-                                <Grid name="self.floorAll">
-                                    <min x="-2" y="-1" z="1"/>
-                                    <max x="'''+str(int(self.obs_size_x/2))+'''" y="-1" z="'''+str(int(self.obs_size_z))+'''"/>
-                                </Grid>
-                            </ObservationFromGrid>
-                            <AgentQuitFromReachingCommandQuota total="'''+str(self.max_episode_steps)+'''" />
-                        </AgentHandlers>
-                    </AgentSection>
-                </Mission>'''
-
-
-
     def log_returns(self):
         """
         Log the current returns as a graph and text file
@@ -498,6 +388,20 @@ class PixelJump(gym.Env):
         plt.ylabel('Return')
         plt.xlabel('Steps')
         plt.savefig('returns.png')
+        
+        plt.clf()
+        plt.plot(range(self.episode), self.episode_distances)
+        plt.title('Pixel Jump Ep Distance')
+        plt.ylabel('Distances')
+        plt.xlabel('Episodes')
+        plt.savefig('distance_returns.png')
+
+        plt.clf()
+        plt.plot(range(1,self.steps[-1]+1), self.relative_differences)
+        plt.title('Pixel Jump Relative Differences')
+        plt.ylabel('Difference')
+        plt.xlabel('Step')
+        plt.savefig('differences_returns.png')
 
         with open('returns.txt', 'w') as f:
             for step, value in zip(self.steps, self.returns):
