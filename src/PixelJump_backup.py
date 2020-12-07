@@ -133,16 +133,21 @@ class PixelJump(gym.Env):
         az = 0 
         ay = -9.8  
         t = 0.1
-        d = np.radians(70) 
+        d = np.radians(70)
+        degree = -1 * degree + 90 # Adjust degree in minecraft to real degree in trigonometry.
+                                  # For example, 0 degree in minecraft is viewed as 90 degree in a xz plane, 
+                                  # a simple solution is to add 90 degree to the original degree,
+                                  # Caution, in mincraft positive degree resssults from clockwise rotation,
+                                  # negative degree results form counter-clockwise rotation, which is the inverse of general measurement.
 
         M = []
 
-        vx = v * np.tan(np.radians(degree))
-        vz = v * np.cos(d)
+        vx = v * np.cos(d) * np.cos(np.radians(degree)) # cos(degree) give the ratio of x after transformation
+        vz = v * np.cos(d) * np.sin(np.radians(degree)) # sin(degree) give the ratio of z after transformation
         vy = v * np.sin(d)
 
         while True:
-            x = x + vx*t
+            x = x - vx*t
             z = z + vz*t
             y = y + vy*t + 0.5*ay*(t**2)
 
