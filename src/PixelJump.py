@@ -32,7 +32,7 @@ class PixelJump(gym.Env):
         # 2. Complete Platform with goal block randomly at z-axis
         # 3. Complete Platform with goal block randomly placed
         # 4. Incomplete Platform with goal block randomly placed or might not have one
-        self.difficulty = 3
+        self.difficulty = 2
 
         # Map size
         self.size = 300
@@ -257,7 +257,6 @@ class PixelJump(gym.Env):
 
         # Get Reward
         score = 0
-
         self.relative_pos = np.sqrt( (self.XPos-XRel)**2 + (self.ZPos-ZRel)**2)
         self.relative_differences.append(self.relative_pos)
         self.episode_distance += 1
@@ -268,14 +267,12 @@ class PixelJump(gym.Env):
                 self.relative_pos = 0
             elif score == self.penalty:
                 done = True
-                score -= self.relative_pos
                 self.episode_distance -= 1
-            else: # if score != self.penalty and score != self.goal_reward:
-                score -= self.relative_pos*2
-
+            # else if score != self.penalty and score != self.goal_reward:
+                
+        score -= (self.relative_pos*10)
         self.episode_score.append(score)
         self.episode_return += score
-
 
         # ============================ Output ============================================
         print("\nStep: {}".format(self.cur_step))
