@@ -124,7 +124,7 @@ class PixelJump(gym.Env):
         self.XPos = 1.5
         self.YPos = 3
         self.ZPos = 1.5
-        self.relative_pos = -1
+        self.relative_pos = 0
         self.relative_pos_x = 0
         self.relative_pos_z = 0
 
@@ -146,11 +146,12 @@ class PixelJump(gym.Env):
         ay = -9.8  
         t = 0.08
         d = np.radians(70) 
+        degree = -1*degree+90
 
         M = []
 
-        vx = v * np.tan(np.radians(degree))
-        vz = v * np.cos(d)
+        vx = v * np.cos(d) * np.cos(np.radians(degree))
+        vz = v * np.cos(d) * np.sin(np.radians(degree))
         vy = v * np.sin(d)
 
         while True:
@@ -192,8 +193,6 @@ class PixelJump(gym.Env):
             done: <bool> indicates terminal state
             info: <dict> dictionary of extra information
         """ 
-        step_pos_x = self.XPos
-        step_pos_z = self.ZPos
 
         velocity_diff = self.velocity_max-self.velocity_min 
         self.velocity = self.velocity_min + (velocity_diff * action[0])
@@ -209,7 +208,7 @@ class PixelJump(gym.Env):
             self.degree = -right_theta + theta * action[1]
 
 
-        movements = self.movement(self.velocity, self.XPos, self.YPos, self.ZPos, self.degree)
+        movements = self.movement(self.velocity, self.XPos, self.YPos, self.ZPos, self.degree)#self.degree)
         commands = self.perform_jump(movements)
 
         # for c in commands:
@@ -227,30 +226,39 @@ class PixelJump(gym.Env):
             done = True
             time.sleep(2)  
 
+        # Get Reward
+        score = 0
+        self.relative_pos = np.sqrt( (self.XPos-self.relative_pos_x)**2 + (self.ZPos-self.relative_pos_z)**2)
+        self.relative_differences.append(self.relative_pos)
+        self.episode_distance += 1
+
+
+        print("\nGlass   Position: ({},{})".format(self.relative_pos_z, self.relative_pos_x))
+
         # Get Observation
         world_state = self.agent_host.getWorldState()
         for error in world_state.errors:
             print("Error:", error.text)
         self.obs = self.get_observation(world_state) 
 
-        # Get Reward
-        step_pos_z = self.ZPos - step_pos_z
-        step_pos_x = self.XPos - step_pos_x
-        score = 0
-        self.relative_pos = np.sqrt( (step_pos_x-self.relative_pos_x)**2 + (step_pos_z-self.relative_pos_z)**2)
-        self.relative_differences.append(self.relative_pos)
+        print("Current Position: ({},{})".format(round(self.ZPos,2), round(self.XPos,2)))
+        print("Relative distance: {}\n".format(self.relative_pos))
+
         for r in world_state.rewards:
             score = r.getValue()
             if score == self.goal_reward:
+                done = False
                 self.relative_pos = 0
-                self.episode_distance += 1
             elif score == self.penalty:
                 done = True
+                score -= self.relative_pos
+                self.episode_distance -= 1
             else: # if score != self.penalty and score != self.goal_reward:
-                score = round((1-(self.relative_pos/15)) * (self.goal_reward-30), 4)
-                self.episode_distance += 1
+                score -= self.relative_pos*2
+
         self.episode_score.append(score)
         self.episode_return += score
+
 
         print("\nStep: {}".format(self.cur_step))
         print("Step Score: {}".format(score))
@@ -259,10 +267,6 @@ class PixelJump(gym.Env):
         print("Degree:   {}".format(self.degree))
         print("Theta:    {}".format(theta))
 
-        print("Current Position: ({},{})".format(round(step_pos_z,2), round(step_pos_x,2)))
-        print("Glass   Position: ({},{})".format(self.relative_pos_z, self.relative_pos_x))
-        print("Relative distance: {}\n".format(self.relative_pos))
-            
         return self.obs.flatten(), score, done, dict()
 
 
@@ -294,40 +298,39 @@ class PixelJump(gym.Env):
                 row = 0
                 blocks = 0
                 platform_row = 0
-
-                num_zero = 0
+                firstBlock = True
 
                 grid_blocks = []
                 grid_glass = []
                 for x in grid:        
-                    blocks += 1
                     if blocks%5 == 0:
                         row += 1
                     if row > 2 and (row-platform_row <= 3 or platform_row == 0):
                         if x in self.block_types:
                             grid_glass.append(0)
                             grid_blocks.append(1)
+                            if firstBlock:
+                                self.relative_pos_x = self.XPos + (blocks%5-2)
+                                self.relative_pos_z =  self.ZPos + row
+                                firstBlock = False
                             if platform_row == 0:
                                 platform_row = row
                         elif x == "glass":
                             grid_blocks.append(1)
                             grid_glass.append(1)
-                            self.relative_pos_x = np.abs(blocks%5/2)
-                            self.relative_pos_z = row+1
+                            self.relative_pos_x = self.XPos + (blocks%5-2)
+                            self.relative_pos_z = self.ZPos + row
                         else:
                             grid_blocks.append(0)
                             grid_glass.append(0)
-                            num_zero += 1
                     else:
                         grid_blocks.append(0)
                         grid_glass.append(0)
-                        num_zero += 1
+
+                    blocks += 1
+
 
                 obs = np.reshape(grid_blocks+grid_glass, (2, self.obs_size_z, self.obs_size_x))
-
-                # if num_zero < 50:
-                #     print()
-                #     print(obs)
 
                 break   
 
@@ -372,7 +375,7 @@ class PixelJump(gym.Env):
         Args:
             steps (list): list of global steps after each episode
             returns (list): list of total return of each episode
-        """
+                """
         box = np.ones(self.log_frequency) / self.log_frequency
         returns_smooth = np.convolve(self.returns, box, mode='same')
         plt.clf()
@@ -381,24 +384,67 @@ class PixelJump(gym.Env):
         plt.ylabel('Return')
         plt.xlabel('Steps')
         plt.savefig('returns.png')
+
+        with open('returns.txt', 'w') as f:
+            for step, value in zip(self.steps, self.returns):
+                f.write("{}\t{}\n".format(step, value)) 
+            
+        a = 0
+        value_sum = 0
+        episodes = []
+        avg_values = []
+
+        with open('distance_returns.txt', 'w') as f:
+            for i in range(self.episode):
+                distance = self.episode_distances[i]
+                f.write("{}\t{}\n".format(i, distance))
+
+                a += 1
+                value_sum += distance
+                if(a % self.avg_size == 0):
+                    episodes.append(a)
+                    avg_values.append(value_sum/self.avg_size)
+                    value_sum = 0
+        
+        if (a % self.avg_size != 0):
+            episodes.append(a)
+            avg_values.append(value_sum/(a % self.avg_size))
         
         plt.clf()
-        plt.plot(range(self.episode), self.episode_distances)
+        plt.plot(episodes, avg_values)
         plt.title('Pixel Jump Ep Distance')
         plt.ylabel('Distances')
         plt.xlabel('Episodes')
         plt.savefig('distance_returns.png')
 
+        a = 0
+        value_sum = 0
+        episodes = [] #steps
+        avg_values = []
+        
+        with open('differences_returns.txt', 'w') as f:
+            for i in range(len(self.relative_differences)):
+                difference = self.relative_differences[i]
+                f.write("{}\t{}\n".format(i+1, difference)) 
+                
+                a += 1
+                difference = self.relative_differences[i]
+                value_sum += difference
+                if(a % self.avg_size == 0):
+                    episodes.append(a)
+                    avg_values.append(value_sum/self.avg_size)
+                    value_sum = 0
+
+        if (a % self.avg_size != 0):
+            episodes.append(a)
+            avg_values.append(value_sum/(a % self.avg_size))
+
         plt.clf()
-        plt.plot(range(1,self.steps[-1]+1), self.relative_differences)
+        plt.plot(episodes, avg_values)
         plt.title('Pixel Jump Relative Differences')
         plt.ylabel('Difference')
         plt.xlabel('Step')
         plt.savefig('differences_returns.png')
-
-        with open('returns.txt', 'w') as f:
-            for step, value in zip(self.steps, self.returns):
-                f.write("{}\t{}\n".format(step, value)) 
 
 
 if __name__ == '__main__':
