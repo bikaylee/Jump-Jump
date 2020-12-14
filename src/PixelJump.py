@@ -432,8 +432,11 @@ class PixelJump(gym.Env):
             episodes.append(a)
             avg_values.append(value_sum/(a % self.avg_size))
         
+
+        avg_smooth = np.convolve(avg_values, box, mode='same')
+
         plt.clf()
-        plt.plot(episodes, avg_values)
+        plt.plot(episodes, avg_smooth)
         plt.title('Pixel Jump Ep Distance')
         plt.ylabel('Distances')
         plt.xlabel('Episodes')
@@ -461,8 +464,10 @@ class PixelJump(gym.Env):
             episodes.append(a)
             avg_values.append(value_sum/(a % self.avg_size))
 
+        avg_smooth = np.convolve(avg_values, box, mode='same')
+
         plt.clf()
-        plt.plot(episodes, avg_values)
+        plt.plot(episodes, avg_smooth)
         plt.title('Pixel Jump Relative Differences')
         plt.ylabel('Difference')
         plt.xlabel('Step')
