@@ -24,10 +24,19 @@ class PixelJump(gym.Env):
 
     def __init__(self, env_config):  
         # Static Parameters
+
+        # ===================== XML Hyper Parameters ============================
+
+        # Map Difficulty Level
+        # 1. Complete Platform with goal block always centered
+        # 2. Complete Platform with goal block randomly at z-axis
+        # 3. Complete Platform with goal block randomly placed
+        # 4. Incomplete Platform with goal block randomly placed or might not have one
+        self.difficulty = 3
+
         # Map size
         self.size = 300
         self.floor = 3
-        self.difficulty = 3
         
         # Gap size between each platfrom
         self.gap_min = 2
@@ -47,28 +56,47 @@ class PixelJump(gym.Env):
 
         # Platform block types
         self.block_types = ['iron_block', 'emerald_block', 'gold_block', 'lapis_block', 'diamond_block', 'redstone_block', 'purpur_block']
+        
+        # reward system
+        self.penalty = -10
+        self.goal_reward = 100
 
+        # ===================== PixelJump Parameters ====================
+
+        # observation space parameters
         self.obs_size_x = 5
         self.obs_size_z = 10
-        self.max_episode_steps = 50
-        self.log_frequency = 50
 
+        # graph/plot parameters
+        self.max_episode_steps = 50
+        self.obs = None
+        self.episode_step = 0
+        self.episode_return = 0
+        self.returns = []
+        self.steps = []
+        self.current_step = 0
+        self.episode = 0
+        self.episode_score = []
+        self.cur_step = 0
+        self.log_frequency = 100
+        self.avg_size = 10
+
+        self.episode_distance = 0
+        self.episode_distances = []
+        self.relative_differences = []
+
+
+        # ===================== Step Parameters ===========================
         self.XPos = 1.5
         self.YPos = 3
         self.ZPos = 1.5
 
         self.velocity = 0
         self.degree = 0
-        self.relative_pos = -1
+        self.relative_pos = 0
         self.relative_pos_x = 0
         self.relative_pos_z = 0
-        self.episode_distance = 0
-        self.episode_distances = []
-        self.relative_differences = []
-        self.avg_size = 10
-
-        self.penalty = -5
-        self.goal_reward = 50
+        
 
         # Rllib Parameters
         self.action_space = Box(0, 1, shape=(2,), dtype=np.float32) # used to determine its degree and the chosne velocity
@@ -83,16 +111,6 @@ class PixelJump(gym.Env):
             print(self.agent_host.getUsage())
             exit(1)
 
-        # PixelJump Parameters
-        self.obs = None
-        self.episode_step = 0
-        self.episode_return = 0
-        self.returns = []
-        self.steps = []
-        self.current_step = 0
-        self.episode = 0
-        self.episode_score = []
-        self.cur_step = 0
 
     def reset(self):
         """
@@ -116,8 +134,7 @@ class PixelJump(gym.Env):
             print("Avg return: {}".format(sum(self.returns)/(l-1)))
             print("========================================================")    
 
-      
-        
+
         self.episode += 1
         self.episode_return = 0
         self.episode_step = 0
@@ -130,7 +147,6 @@ class PixelJump(gym.Env):
         self.relative_pos = 0
         self.relative_pos_x = 0
         self.relative_pos_z = 0
-
 
         # Log
         if len(self.returns) > self.log_frequency and \
@@ -147,22 +163,23 @@ class PixelJump(gym.Env):
         ax = 0
         az = 0 
         ay = -9.8  
-        t = 0.1
-        d = np.radians(70)
-        degree = -1 * degree + 90 # Adjust degree in minecraft to real degree in trigonometry.
-                                  # For example, 0 degree in minecraft is viewed as 90 degree in a xz plane, 
-                                  # a simple solution is to add 90 degree to the original degree,
-                                  # Caution, in mincraft positive degree resssults from clockwise rotation,
-                                  # negative degree results form counter-clockwise rotation, which is the inverse of general measurement.
+        t = 0.08
+        d = np.radians(70) 
+        degree = -1*degree+90 # Adjust degree in minecraft to real degree in trigonometry.
+                              # For example, 0 degree in minecraft is viewed as 90 degree in a xz plane, 
+                              # a simple solution is to add 90 degree to the original degree,
+                              # Caution, in mincraft positive degree resssults from clockwise rotation,
+                              # negative degree results form counter-clockwise rotation, which is the inverse of general measurement.
 
         M = []
+
 
         vx = v * np.cos(d) * np.cos(np.radians(degree)) # cos(degree) give the ratio of x after transformation
         vz = v * np.cos(d) * np.sin(np.radians(degree)) # sin(degree) give the ratio of z after transformation
         vy = v * np.sin(d)
 
         while True:
-            x = x - vx*t
+            x = x + vx*t
             z = z + vz*t
             y = y + vy*t + 0.5*ay*(t**2)
 
@@ -181,7 +198,7 @@ class PixelJump(gym.Env):
         path = []
         for a in movementPath:
             x,y,z = a[0],a[1],a[2]
-            path.append("tp {} {} {}".format(round(x,2),round(y,2), round(z,2)))
+            path.append("tp {} {} {}".format(round(x,4),round(y,4), round(z,4)))
         
         self.XPos = x
         self.YPos = y
@@ -200,25 +217,20 @@ class PixelJump(gym.Env):
             done: <bool> indicates terminal state
             info: <dict> dictionary of extra information
         """ 
-        step_pos_x = self.XPos
-        step_pos_z = self.ZPos
 
-        velocity_diff = self.velocity_max-self.velocity_min 
-        self.velocity = round(self.velocity_min + (velocity_diff * action[0]),2)
-        self.degree = round(-57 + 104 * action[1],2)
+        # Perform a jump based on user picked actions
+        self.velocity = self.velocity_min + ((self.velocity_max-self.velocity_min) * action[0])
 
+        left_theta = np.degrees(np.arctan((3-self.XPos) / (self.gap_min+1)))
+        right_theta = np.degrees(np.arctan(self.XPos / (self.gap_min+1)))
+        theta = left_theta + right_theta
 
-        # left_theta = np.degrees(np.arctan((3-self.XPos) / (self.gap_min+1)))
-        # right_theta = np.degrees(np.arctan(self.XPos / (self.gap_min+1)))
-        # theta = left_theta + right_theta
+        if self.XPos >= 1.5:
+            self.degree = -left_theta + theta * action[1]
+        elif self.XPos < 1.5:
+            self.degree = -right_theta + theta * action[1]
 
-        # if self.XPos >= 1.5:
-        #     self.degree = -left_theta + theta * action[1]
-        # elif self.XPos < 1.5:
-        #     self.degree = -right_theta + theta * action[1]
-
-
-        movements = self.movement(self.velocity, self.XPos, self.YPos, self.ZPos, self.degree)
+        movements = self.movement(self.velocity, self.XPos, self.YPos, self.ZPos, self.degree)#self.degree)
         commands = self.perform_jump(movements)
 
         # for c in commands:
@@ -226,7 +238,7 @@ class PixelJump(gym.Env):
         #     self.agent_host.sendCommand(c)
 
         self.agent_host.sendCommand(commands[-1])
-        time.sleep(1)
+        time.sleep(2)
         self.episode_step += 1
         self.cur_step += 1
 
@@ -234,42 +246,52 @@ class PixelJump(gym.Env):
         done = False
         if self.episode_step >= self.max_episode_steps:
             done = True
-            time.sleep(1)  
+            time.sleep(2)  
 
         # Get Observation
+        XRel = self.relative_pos_x
+        ZRel = self.relative_pos_z
         world_state = self.agent_host.getWorldState()
         for error in world_state.errors:
             print("Error:", error.text)
         self.obs = self.get_observation(world_state) 
 
+
         # Get Reward
-        step_pos_z = self.ZPos - step_pos_z
-        step_pos_x = self.XPos - step_pos_x
         score = 0
-        self.relative_pos = round(np.sqrt((step_pos_x-self.relative_pos_x)**2 + (step_pos_z-self.relative_pos_z)**2),2)
+        self.relative_pos = np.sqrt( (self.XPos-XRel)**2 + (self.ZPos-ZRel)**2)
         self.relative_differences.append(self.relative_pos)
         self.episode_distance += 1
-        
+
         for r in world_state.rewards:
             score = r.getValue()
-            if score == self.penalty:
+            if score == self.goal_reward:
+                self.relative_pos = 0
+            elif score == self.penalty:
                 done = True
                 self.episode_distance -= 1
-
-        score -= self.relative_pos
-
-
+            elif score > self.goal_reward: # step on the border of multiple blocks
+                print("======================== ERROR ======================\n")
+                print("                   score = {}\n".format(score))
+                print("======================== ERROR ======================\n")
+                score = self.goal_reward-10
+            # else if score != self.penalty and score != self.goal_reward:
+                
+        score -= (self.relative_pos*10)
         self.episode_score.append(score)
         self.episode_return += score
-        time.sleep(1)  
 
+        # ============================ Output ============================================
         print("\nStep: {}".format(self.cur_step))
-        print("Step Score: {}".format(score))
-        print("Relative Difference: {}".format(self.relative_pos))
+        print("Step Score: {}\n".format(score))
+
         print("Velocity: {}".format(self.velocity))
         print("Degree:   {}".format(self.degree))
-
-            
+        # print("Theta:    {}".format(theta))
+        # print("Glass   Position: ({},{})".format(XRel, ZRel))
+        # print("Current Position: ({},{})".format(round(self.XPos,2), round(self.ZPos,2)))
+        print("Relative distance: {}\n".format(self.relative_pos))
+ 
         return self.obs.flatten(), score, done, dict()
 
 
@@ -301,46 +323,37 @@ class PixelJump(gym.Env):
                 row = 0
                 blocks = 0
                 platform_row = 0
+                firstBlock = True
 
-                num_zero = 0
-            
-                first_block = True
                 grid_blocks = []
                 grid_glass = []
                 for x in grid:        
-                    blocks += 1
                     if blocks%5 == 0:
                         row += 1
                     if row > 2 and (row-platform_row <= 3 or platform_row == 0):
                         if x in self.block_types:
                             grid_glass.append(0)
                             grid_blocks.append(1)
-                            if(first_block):
-                                self.relative_pos_x = np.abs(blocks%5/2)
-                                self.relative_pos_z = row + 1
-                                first_block = False
+                            if firstBlock:
+                                self.relative_pos_x = self.XPos + (blocks%5-2)
+                                self.relative_pos_z =  self.ZPos + row
+                                firstBlock = False
                             if platform_row == 0:
                                 platform_row = row
                         elif x == "glass":
                             grid_blocks.append(1)
                             grid_glass.append(1)
-                            self.relative_pos_x = np.abs(blocks%5/2)
-                            self.relative_pos_z = row+1
+                            self.relative_pos_x = self.XPos + (blocks%5-2)
+                            self.relative_pos_z = self.ZPos + row
                         else:
                             grid_blocks.append(0)
                             grid_glass.append(0)
-                            num_zero += 1
                     else:
                         grid_blocks.append(0)
                         grid_glass.append(0)
-                        num_zero += 1
+                    blocks += 1
 
                 obs = np.reshape(grid_blocks+grid_glass, (2, self.obs_size_z, self.obs_size_x))
-
-                # if num_zero < 50:
-                #     print()
-                #     print(obs)
-
                 break   
 
         return obs
@@ -384,7 +397,7 @@ class PixelJump(gym.Env):
         Args:
             steps (list): list of global steps after each episode
             returns (list): list of total return of each episode
-        """
+                """
         box = np.ones(self.log_frequency) / self.log_frequency
         returns_smooth = np.convolve(self.returns, box, mode='same')
         plt.clf()
@@ -447,9 +460,6 @@ class PixelJump(gym.Env):
         if (a % self.avg_size != 0):
             episodes.append(a)
             avg_values.append(value_sum/(a % self.avg_size))
-                
-        
-
 
         plt.clf()
         plt.plot(episodes, avg_values)
