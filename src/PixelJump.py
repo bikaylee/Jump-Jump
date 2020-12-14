@@ -32,7 +32,7 @@ class PixelJump(gym.Env):
         # 2. Complete Platform with goal block randomly at z-axis
         # 3. Complete Platform with goal block randomly placed
         # 4. Incomplete Platform with goal block randomly placed or might not have one
-        self.difficulty = 2
+        self.difficulty = 3
 
         # Map size
         self.size = 300
@@ -79,6 +79,7 @@ class PixelJump(gym.Env):
         self.episode_score = []
         self.cur_step = 0
         self.log_frequency = 100
+        self.avg_size = 10
 
         self.episode_distance = 0
         self.episode_distances = []
@@ -129,9 +130,10 @@ class PixelJump(gym.Env):
         l = len(self.returns)
         e = len(self.episode_score)
         if l > 1 and e > 0:     
-            print("\nEpisode return: {}".format(sum(self.episode_score)/e))
+            print("Episode {} return: {}".format(self.episode, sum(self.episode_score)/e))
             print("Avg return: {}".format(sum(self.returns)/(l-1)))
-            print("\n========================================================")    
+            print("========================================================")    
+
 
         self.episode += 1
         self.episode_return = 0
@@ -268,6 +270,11 @@ class PixelJump(gym.Env):
             elif score == self.penalty:
                 done = True
                 self.episode_distance -= 1
+            elif score > self.goal_reward: # step on the border of multiple blocks
+                print("======================== ERROR ======================\n")
+                print("                   score = {}\n".format(score))
+                print("======================== ERROR ======================\n")
+                score = self.goal_reward-10
             # else if score != self.penalty and score != self.goal_reward:
                 
         score -= (self.relative_pos*10)
@@ -280,9 +287,9 @@ class PixelJump(gym.Env):
 
         print("Velocity: {}".format(self.velocity))
         print("Degree:   {}".format(self.degree))
-        print("Theta:    {}".format(theta))
-        print("Glass   Position: ({},{})".format(XRel, ZRel))
-        print("Current Position: ({},{})".format(round(self.XPos,2), round(self.ZPos,2)))
+        # print("Theta:    {}".format(theta))
+        # print("Glass   Position: ({},{})".format(XRel, ZRel))
+        # print("Current Position: ({},{})".format(round(self.XPos,2), round(self.ZPos,2)))
         print("Relative distance: {}\n".format(self.relative_pos))
  
         return self.obs.flatten(), score, done, dict()
