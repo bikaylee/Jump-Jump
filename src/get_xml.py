@@ -125,7 +125,7 @@ def get_mission_xml(self):
                         <RewardForTouchingBlockType>
                             <Block type='glass' reward="'''+str(int(self.goal_reward))+'''" />
                             <Block type='iron_block emerald_block gold_block lapis_block diamond_block redstone_block purpur_block' reward="'''+str(int(self.goal_reward-10))+'''" />
-                            <Block type='lava' reward="'''+str(int(self.penalty))+'''" behaviour='onceOnly' />
+                            <Block type='lava' reward="'''+str(int(self.penalty))+'''"/>
                         </RewardForTouchingBlockType>
                         <AbsoluteMovementCommands/>
                         <DiscreteMovementCommands/>
