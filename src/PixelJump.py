@@ -32,7 +32,7 @@ class PixelJump(gym.Env):
         # 2. Complete Platform with goal block randomly at z-axis
         # 3. Complete Platform with goal block randomly placed
         # 4. Incomplete Platform with goal block randomly placed or might not have one
-        self.difficulty = 3
+        self.difficulty = 4
 
         # Map size
         self.size = 300
@@ -122,16 +122,17 @@ class PixelJump(gym.Env):
         world_state = self.init_malmo()
 
         # Reset Variables
-        self.episode += 1
         self.episode_steps.append(self.episode_step)
         self.episode_scores.append(self.episode_score)
 
 
-        if len(self.episode_steps) > 1 and self.episode > 0:     
+        if self.episode_step >= 1 and self.episode > 0:     
             print("Episode {} return: {}".format(self.episode, self.episode_score/self.episode_step))
             print("Avg return: {}\n".format(sum(self.episode_scores)/(self.episode)))
             print("========================================================")    
 
+
+        self.episode += 1
         self.episode_step = 0
         self.episode_score = 0
 
@@ -190,7 +191,8 @@ class PixelJump(gym.Env):
             if y < self.floor:
                 break
 
-        M.append([x,y,z])
+            M.append([x,y,z])
+
         return M
 
 
@@ -198,7 +200,7 @@ class PixelJump(gym.Env):
         path = []
         for a in movementPath:
             x,y,z = a[0],a[1],a[2]
-            path.append("tp {} {} {}".format(round(x,4),round(y,4), round(z,4)))
+            path.append("tp {} {} {}".format(round(x,2),round(y,2), round(z,2)))
 
         self.XPos = x
         self.YPos = y
@@ -230,7 +232,7 @@ class PixelJump(gym.Env):
         elif self.XPos < 1.5:
             self.degree = -right_theta + theta * action[1]
 
-        movements = self.movement(self.velocity, self.XPos, self.YPos, self.ZPos, self.degree)#self.degree)
+        movements = self.movement(self.velocity, self.XPos, self.YPos, self.ZPos, self.degree)
         commands = self.perform_jump(movements)
 
         # for c in commands:
