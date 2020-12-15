@@ -16,15 +16,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 from numpy.random import randint
 
-import gym
-import ray
+import gym, ray
 from gym.spaces import Discrete, Box
 from ray.rllib.agents import ppo
 
-
 class PixelJump(gym.Env):
 
-    def __init__(self, env_config):
+    def __init__(self, env_config):  
         # Static Parameters
 
         # ===================== XML Hyper Parameters ============================
@@ -34,7 +32,7 @@ class PixelJump(gym.Env):
         # 2. Complete Platform with goal block randomly at z-axis
         # 3. Complete Platform with goal block randomly placed
         # 4. Incomplete Platform with goal block randomly placed or might not have one
-        self.difficulty = 1
+        self.difficulty = 4
 
         # Map size
         self.size = 300
@@ -42,23 +40,22 @@ class PixelJump(gym.Env):
 
         # Gap size between each platfrom
         self.gap_min = 2
-        self.gap_max = 4
+        self.gap_max = 4             
 
         # Platform definition
         self.block_density = 0.4   # probability of each block
         self.block_size = 1      # 3x3 platform
         self.goal_block_density = 0.9
 
-        # Direction
-        self.direction_freq = 0.3  # change frequency density
+        # Direction 
+        self.direction_freq = 0.3 # change frequency density
 
         # Jumping range displacement
-        self.velocity_min = 7.81  # range = 4m (Minimum possible distance)
-        self.velocity_max = 11.72  # range = 9m (Maximum possible distance)
+        self.velocity_min =  7.81 # range = 4m (Minimum possible distance)
+        self.velocity_max = 11.72 # range = 9m (Maximum possible distance)
 
         # Platform block types
-        self.block_types = ['iron_block', 'emerald_block', 'gold_block',
-            'lapis_block', 'diamond_block', 'redstone_block', 'purpur_block']
+        self.block_types = ['iron_block', 'emerald_block', 'gold_block', 'lapis_block', 'diamond_block', 'redstone_block', 'purpur_block']
 
         # reward system
         self.penalty = -10
@@ -68,24 +65,26 @@ class PixelJump(gym.Env):
 
         # graph/plot parameter control
         self.max_episode_steps = 50
-        self.log_frequency_eps = 5
-        self.log_frequency_stp = 10
+        self.log_frequency_eps = 500
+        self.log_frequency_stp = 1000
 
         # observation space parameters
         self.obs_size_x = 5
         self.obs_size_z = 10
         self.obs = None
 
-        self.steps= 0
+        # Graph parameters for steps and episodes
+        self.steps = 0
         self.episode = 0
         self.episode_step = 0
         self.episode_score = 0
 
-        self.step_scores = []        # store the number of scores in a step
-        self.step_relative_diff = []  # store number of relative diff in a step
+        self.step_scores = []           # store the number of scores in a step
+        self.step_relative_diff = []    # store number of relative diff in a step
 
-        self.episode_scores = []  # store numbers of scores in an episode
-        self.episode_steps = []  # store numbers of steps in an episode
+        self.episode_scores = []        # store numbers of scores in an episode
+        self.episode_steps = []         # store numbers of steps in an episode
+
 
         # ===================== Step Parameters ===========================
         self.XPos = 1.5
@@ -98,41 +97,42 @@ class PixelJump(gym.Env):
         self.relative_pos_x = 0
         self.relative_pos_z = 0
 
+
         # Rllib Parameters
-        # used to determine its degree and the chosne velocity
-        self.action_space = Box(0, 1, shape=(2,), dtype=np.float32)
+        self.action_space = Box(0, 1, shape=(2,), dtype=np.float32) # used to determine its degree and the chosne velocity
         self.observation_space = Box(0, 1, shape=(np.prod([2, self.obs_size_z, self.obs_size_x]), ), dtype=np.int32)
 
         # Malmo Parameters
         self.agent_host = MalmoPython.AgentHost()
         try:
-            self.agent_host.parse(sys.argv)
+            self.agent_host.parse( sys.argv )
         except RuntimeError as e:
             print('ERROR:', e)
             print(self.agent_host.getUsage())
             exit(1)
 
+
     def reset(self):
         """
         Resets the environment for the next episode.
         Returns
-            observation: <np.array> flattened initial obseravtion
+        observation: <np.array> flattened initial obseravtion
         """
         # Reset Malmo
         world_state = self.init_malmo()
 
         # Reset Variables
-        self.episode += 1
         self.episode_steps.append(self.episode_step)
         self.episode_scores.append(self.episode_score)
 
-        if len(self.episode_steps) > 1 and self.episode > 0:
-            print("Episode {} return: {}".format(
-                self.episode, self.episode_score/self.episode_step))
-            print("Avg return: {}\n".format(
-                sum(self.episode_scores)/(self.episode)))
-            print("========================================================")
 
+        if len(self.episode_steps) > 1 and self.episode > 0:     
+            print("Episode {} return: {}".format(self.episode, self.episode_score/self.episode_step))
+            print("Avg return: {}\n".format(sum(self.episode_scores)/(self.episode)))
+            print("========================================================")    
+
+
+        self.episode += 1
         self.episode_step = 0
         self.episode_score = 0
 
@@ -140,18 +140,20 @@ class PixelJump(gym.Env):
         self.YPos = 3
         self.ZPos = 1.5
 
+
         # Log
-        if self.steps> 10000:
+        if self.steps > 10000:
             self.log_frequency_eps /= 2
-        elif self.steps> 5000:
+        elif self.steps > 5000:
             self.log_frequency_eps /= 5
+
 
         if self.episode > self.log_frequency_eps and \
             self.episode % self.log_frequency_eps == 0:
             self.log_episode()
 
-        if self.steps> self.log_frequency_stp and \
-            self.steps% self.log_frequency_stp == 0:
+        if self.steps > self.log_frequency_stp and \
+            self.steps % self.log_frequency_stp == 0:
             self.log_steps()
 
         # Get Observation
@@ -159,24 +161,22 @@ class PixelJump(gym.Env):
 
         return self.obs.flatten()
 
-    def movement(self, v, x, y, z, degree):
+
+    def movement (self, v, x, y, z, degree):
         ax = 0
-        az = 0
-        ay = -9.8
+        az = 0 
+        ay = -9.8  
         t = 0.08
-        d = np.radians(70)
-        # Adjust degree in minecraft to real degree in trigonometry.
-        degree = -1*degree+90
-                              # For example, 0 degree in minecraft is viewed as 90 degree in a xz plane,
+        d = np.radians(70) 
+        degree = -1*degree+90 # Adjust degree in minecraft to real degree in trigonometry.
+                              # For example, 0 degree in minecraft is viewed as 90 degree in a xz plane, 
                               # a simple solution is to add 90 degree to the original degree,
                               # Caution, in mincraft positive degree resssults from clockwise rotation,
                               # negative degree results form counter-clockwise rotation, which is the inverse of general measurement.
         M = []
 
-        # cos(degree) give the ratio of x after transformation
-        vx = v * np.cos(d) * np.cos(np.radians(degree))
-        # sin(degree) give the ratio of z after transformation
-        vz = v * np.cos(d) * np.sin(np.radians(degree))
+        vx = v * np.cos(d) * np.cos(np.radians(degree)) # cos(degree) give the ratio of x after transformation
+        vz = v * np.cos(d) * np.sin(np.radians(degree)) # sin(degree) give the ratio of z after transformation
         vy = v * np.sin(d)
 
         while True:
@@ -191,32 +191,33 @@ class PixelJump(gym.Env):
             if y < self.floor:
                 break
 
-            M.append([x, y, z])
+        M.append([x,y,z])
         return M
+
 
     def perform_jump(self, movementPath):
         path = []
         for a in movementPath:
-            x, y, z = a[0], a[1], a[2]
-            path.append("tp {} {} {}".format(
-                round(x, 4), round(y, 4), round(z, 4)))
+            x,y,z = a[0],a[1],a[2]
+            path.append("tp {} {} {}".format(round(x,4),round(y,4), round(z,4)))
 
         self.XPos = x
         self.YPos = y
         self.ZPos = z
         return path
 
+
     def step(self, action):
         """
         Take an action in the environment and return the results.
         Args
-            action: <int> index of the action to take
+        action: <int> index of the action to take
         Returns
-            observation: <np.array> flattened array of obseravtion
-            reward: <int> reward from taking action
-            done: <bool> indicates terminal state
-            info: <dict> dictionary of extra information
-        """
+        observation: <np.array> flattened array of obseravtion
+        reward: <int> reward from taking action
+        done: <bool> indicates terminal state
+        info: <dict> dictionary of extra information
+        """ 
 
         # Perform a jump based on user picked actions
         self.velocity = self.velocity_min + ((self.velocity_max-self.velocity_min) * action[0])
@@ -229,10 +230,8 @@ class PixelJump(gym.Env):
             self.degree = -left_theta + theta * action[1]
         elif self.XPos < 1.5:
             self.degree = -right_theta + theta * action[1]
-        if self.difficulty == 1 or self.difficulty == 2:
-            self.degree = 0
 
-        movements = self.movement(self.velocity, self.XPos, self.YPos, self.ZPos, self.degree) 
+        movements = self.movement(self.velocity, self.XPos, self.YPos, self.ZPos, self.degree)
         commands = self.perform_jump(movements)
 
         # for c in commands:
@@ -242,14 +241,14 @@ class PixelJump(gym.Env):
         self.agent_host.sendCommand(commands[-1])
         time.sleep(2)
 
-        self.steps+= 1
+        self.steps += 1
         self.episode_step += 1
 
         # Get Done
         done = False
         if self.episode_step >= self.max_episode_steps:
             done = True
-            time.sleep(2)
+            time.sleep(2)  
 
         # Get Observation
         XRel = self.relative_pos_x
@@ -257,7 +256,8 @@ class PixelJump(gym.Env):
         world_state = self.agent_host.getWorldState()
         for error in world_state.errors:
             print("Error:", error.text)
-        self.obs = self.get_observation(world_state)
+        self.obs = self.get_observation(world_state) 
+
 
         # Get Reward
         score = 0
@@ -271,7 +271,7 @@ class PixelJump(gym.Env):
             elif score <= self.penalty:
                 score = self.penalty
                 done = True
-            elif score > self.goal_reward:  # step on the border of multiple blocks
+            elif score > self.goal_reward: # step on the border of multiple blocks
                 score = self.goal_reward-10
 
         score -= (self.relative_pos*10)
@@ -292,16 +292,17 @@ class PixelJump(gym.Env):
 
         return self.obs.flatten(), score, done, dict()
 
+
     def get_observation(self, world_state):
         """
-        Use the agent observation API to get a 2 x 5 x 5 grid around the agent.
+        Use the agent observation API to get a 2 x 5 x 5 grid around the agent. 
         The agent is in the center square facing up.
         Args
-            world_state: <object> current agent world state
+        world_state: <object> current agent world state
         Returns
-            observation: <np.array>
+        observation: <np.array>
         """
-        obs = np.zeros((2, self.obs_size_z, self.obs_size_x))
+        obs = np.zeros((2,self.obs_size_z, self.obs_size_x))
 
         while world_state.is_mission_running:
             time.sleep(0.1)
@@ -328,24 +329,23 @@ class PixelJump(gym.Env):
 
                 grid_blocks = []
                 grid_glass = []
-                for x in grid:
-                    if blocks % 5 == 0:
+                for x in grid:        
+                    if blocks%5 == 0:
                         row += 1
                     if row > 2 and (row-platform_row <= 3 or platform_row == 0):
                         if x in self.block_types:
                             grid_glass.append(0)
                             grid_blocks.append(1)
                             if firstBlock:
-                                self.relative_pos_x = self.XPos + \
-                                    (blocks % 5-2)
-                                self.relative_pos_z = self.ZPos + row
+                                self.relative_pos_x = self.XPos + (blocks%5-2)
+                                self.relative_pos_z =  self.ZPos + row
                                 firstBlock = False
                             if platform_row == 0:
                                 platform_row = row
                         elif x == "glass":
                             grid_blocks.append(1)
                             grid_glass.append(1)
-                            self.relative_pos_x = self.XPos + (blocks % 5-2)
+                            self.relative_pos_x = self.XPos + (blocks%5-2)
                             self.relative_pos_z = self.ZPos + row
                         else:
                             grid_blocks.append(0)
@@ -355,9 +355,8 @@ class PixelJump(gym.Env):
                         grid_glass.append(0)
                     blocks += 1
 
-                obs = np.reshape(grid_blocks+grid_glass,
-                                 (2, self.obs_size_z, self.obs_size_x))
-                break
+                obs = np.reshape(grid_blocks+grid_glass, (2, self.obs_size_z, self.obs_size_x))
+                break   
 
         return obs
 
@@ -372,13 +371,11 @@ class PixelJump(gym.Env):
 
         max_retries = 3
         my_clients = MalmoPython.ClientPool()
-        # add Minecraft machines here as available
-        my_clients.add(MalmoPython.ClientInfo('127.0.0.1', 10000))
+        my_clients.add(MalmoPython.ClientInfo('127.0.0.1', 10000)) # add Minecraft machines here as available
 
         for retry in range(max_retries):
             try:
-                self.agent_host.startMission(
-                    my_mission, my_clients, my_mission_record, 0, 'PixelJump')
+                self.agent_host.startMission( my_mission, my_clients, my_mission_record, 0, 'PixelJump' )
                 break
             except RuntimeError as e:
                 if retry == max_retries - 1:
@@ -396,11 +393,13 @@ class PixelJump(gym.Env):
 
         return world_state
 
+
+
     def log_episode(self):
         with open('episodes.txt', 'w') as f:
             i = 1
             for step, value in zip(self.episode_steps, self.episode_scores):
-                f.write("{}\t{}\t{}\n".format(i, step, value))
+                f.write("{}\t{}\t{}\n".format(i, step, value)) 
                 i += 1
 
     def log_steps(self):
