@@ -32,7 +32,7 @@ class PixelJump(gym.Env):
         # 2. Complete Platform with goal block randomly at z-axis
         # 3. Complete Platform with goal block randomly placed
         # 4. Incomplete Platform with goal block randomly placed or might not have one
-        self.difficulty = 4
+        self.difficulty = 3
 
         # Map size
         self.size = 300
@@ -122,6 +122,7 @@ class PixelJump(gym.Env):
         world_state = self.init_malmo()
 
         # Reset Variables
+        self.episode += 1
         self.episode_steps.append(self.episode_step)
         self.episode_scores.append(self.episode_score)
 
@@ -131,8 +132,6 @@ class PixelJump(gym.Env):
             print("Avg return: {}\n".format(sum(self.episode_scores)/(self.episode)))
             print("========================================================")    
 
-
-        self.episode += 1
         self.episode_step = 0
         self.episode_score = 0
 
@@ -231,7 +230,7 @@ class PixelJump(gym.Env):
         elif self.XPos < 1.5:
             self.degree = -right_theta + theta * action[1]
 
-        movements = self.movement(self.velocity, self.XPos, self.YPos, self.ZPos, self.degree)
+        movements = self.movement(self.velocity, self.XPos, self.YPos, self.ZPos, self.degree)#self.degree)
         commands = self.perform_jump(movements)
 
         # for c in commands:
