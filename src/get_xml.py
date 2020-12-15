@@ -47,9 +47,26 @@ def get_mission_xml(self):
             z += random.randint(self.gap_min, self.gap_max) + 3
             platform_index += 1
 
-
     if self.difficulty == 3:
-        
+        while platform_index < max_platform:
+            block = random.choice(self.block_types)
+
+            num_blocks = 0
+            arr = [1, 0, -1]
+            for i in range(3):
+                for j in range(3):
+                    if random.random() < 1:
+                        xml += "<DrawBlock x='{}' y='2' z='{}' type='{}'/>".format(x+arr[j], z+arr[i], block)
+                        num_blocks += 1
+
+            # Center block
+            xml += "<DrawBlock x='{}' y='2' z='{}' type='glass'/>".format(x+random.choice(arr), z+random.choice(arr))
+
+            # else:
+            z += random.randint(self.gap_min, self.gap_max) + 3
+            platform_index += 1
+
+    if self.difficulty == 4:
         while platform_index < max_platform:
             block = random.choice(self.block_types)
 
@@ -107,7 +124,7 @@ def get_mission_xml(self):
                     <AgentHandlers>
                         <RewardForTouchingBlockType>
                             <Block type='glass' reward="'''+str(int(self.goal_reward))+'''" />
-                            <Block type='iron_block emerald_block gold_block lapis_block diamond_block redstone_block purpur_block' reward='10' />
+                            <Block type='iron_block emerald_block gold_block lapis_block diamond_block redstone_block purpur_block' reward="'''+str(int(self.goal_reward-10))+'''" />
                             <Block type='lava' reward="'''+str(int(self.penalty))+'''" behaviour='onceOnly' />
                         </RewardForTouchingBlockType>
                         <AbsoluteMovementCommands/>
