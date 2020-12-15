@@ -6,7 +6,7 @@ def plotGraph(fileName, xLabel, yLabel):
 
 	log_frequency = 50
 	box = np.ones(log_frequency) /log_frequency
-	data = np.genfromtxt(fileName+'.txt', delimiter="	")
+	data = np.genfromtxt(fileName+'.txt', delimiter="\t")
 
 	X = []
 	Y = []
