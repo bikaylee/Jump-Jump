@@ -12,7 +12,6 @@ Some minor changes have been made to the proposed ideas to enhance the creativit
 
 
 ### Approach
-Give a detailed description of your approach, in a few paragraphs. You should summarize the main algorithm you are using, such as by writing out the update equation (even if it is off-the-shelf). You Should also give details about the approach as it applies to your scenario.  For example, if you are using reinforcement learning for a given scenario, describe the setup in some detail, i.e. how many states/actions you have, what does the reward function look like. A good guideline is to incorporate sufficient details so that most of your approach is reproducible by a reader. I encourage you to use figures for this, as appropriate,as we used in the writeups for the assignments. I recommend at least 2-3 paragraphs.<br><br>
 
 #### Environment & Reward System
 Jumping platform Center: +100 <br>
@@ -67,11 +66,9 @@ def movement (v, x ,y):
 
 #### Machine Learning Algorithms
 The main algorithm that we used is using tabular Q-learning to train our jumping agent. According to the lecture materials, the Q-Learning Algorithm: <br><br>
-$$
-\begin{aligned}
+$$\begin{aligned}
 &Q(S_t, A_t)\leftarrow Q(S_t, A_t) + \alpha[R_{t+1} + \gamma\max_a Q(S_{t+1},a)- Q(s_t, A_t)]
-\end{aligned}
-$$
+\end{aligned}$$
 
 $$S_t:$$ current state <br>
 $$A_t:$$ current action <br>
