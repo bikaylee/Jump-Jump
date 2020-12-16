@@ -125,7 +125,7 @@ def get_mission_xml(self):
                         <RewardForTouchingBlockType>
                             <Block type='glass' reward="'''+str(int(self.goal_reward))+'''" />
                             <Block type='iron_block emerald_block gold_block lapis_block diamond_block redstone_block purpur_block' reward="'''+str(int(self.goal_reward-10))+'''" />
-                            <Block type='lava' reward="'''+str(int(self.penalty))+'''"/>
+                            <Block type='lava' reward="'''+str(int(self.penalty))+'''" />
                         </RewardForTouchingBlockType>
                         <AbsoluteMovementCommands/>
                         <DiscreteMovementCommands/>
@@ -136,6 +136,9 @@ def get_mission_xml(self):
                                 <max x="'''+str(int(self.obs_size_x/2))+'''" y="-1" z="'''+str(int(self.obs_size_z))+'''"/>
                             </Grid>
                         </ObservationFromGrid>
+                        <AgentQuitFromTouchingBlockType>
+                            <Block type='lava' />
+                        </AgentQuitFromTouchingBlockType>
                         <AgentQuitFromReachingCommandQuota total="'''+str(self.max_episode_steps)+'''" />
                     </AgentHandlers>
                 </AgentSection>
