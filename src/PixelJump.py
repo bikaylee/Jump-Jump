@@ -81,10 +81,10 @@ class PixelJump(gym.Env):
 
         self.step_scores = []           # store the number of scores in a step
         self.step_relative_diff = []    # store number of relative diff in a step
+        self.step_raw_scores = []
 
         self.episode_scores = []        # store numbers of scores in an episode
         self.episode_steps = []         # store numbers of steps in an episode
-
 
         # ===================== Step Parameters ===========================
         self.XPos = 1.5
@@ -142,18 +142,16 @@ class PixelJump(gym.Env):
 
 
         # Log
-        if self.steps > 10000:
-            self.log_frequency_eps /= 2
-        elif self.steps > 5000:
-            self.log_frequency_eps /= 5
+        if self.episode > 10000:
+            self.log_frequency_eps = 50
+        elif self.episode > 5000:
+            self.log_frequency_eps /= 100
 
 
-        if self.episode > self.log_frequency_eps and \
-            self.episode % self.log_frequency_eps == 0:
+        if int(self.episode % self.log_frequency_eps) == 0:
             self.log_episode()
 
-        if self.steps > self.log_frequency_stp and \
-            self.steps % self.log_frequency_stp == 0:
+        if int(self.steps % self.log_frequency_stp) == 0:
             self.log_steps()
 
         # Get Observation
@@ -199,11 +197,13 @@ class PixelJump(gym.Env):
     def perform_jump(self, movementPath):
         path = []
         for a in movementPath:
-            x,y,z = a[0],a[1],a[2]
-            path.append("tp {} {} {}".format(round(x,2),round(y,2), round(z,2)))
+            x,y,z = round(a[0],2), round(a[1],2), round(a[2],2)
+            path.append("tp {} {} {}".format(x, y, z))
+
+        path[-1] = "tp {} {} {}".format(x, 3.00, z)
 
         self.XPos = x
-        self.YPos = y
+        self.YPos = 3.00
         self.ZPos = z
         return path
 
@@ -221,6 +221,10 @@ class PixelJump(gym.Env):
         """ 
 
         # Perform a jump based on user picked actions
+        error_X = self.XPos
+        error_Y = self.YPos
+        error_Z = self.ZPos
+
         self.velocity = self.velocity_min + ((self.velocity_max-self.velocity_min) * action[0])
 
         left_theta = np.degrees(np.arctan((3-self.XPos) / (self.gap_min+1)))
@@ -255,8 +259,31 @@ class PixelJump(gym.Env):
         XRel = self.relative_pos_x
         ZRel = self.relative_pos_z
         world_state = self.agent_host.getWorldState()
+
+        # ============== Error ===========================
         for error in world_state.errors:
-            print("Error:", error.text)
+            print("\n\n\n\n\nError:", error.text)
+            print("Error: ", error.text)
+            print("\n\n\n\n\n")
+
+            self.steps -= 1
+            self.episode_step -= 1
+            self.XPos = error_X
+            self.YPos = error_Y
+            self.ZPos = error_Z
+            self.log_episode()
+            self.log_steps()
+            with open('error'+ str(self.steps) + '.txt', 'w') as f:
+                f.write(error.text + '\n')
+                f.write("Missiong Running: ", world_state.is_mission_running)
+                f.write("\n\nStep: \t{}\n".format(self.steps))
+                f.write("Curr Pos:  \t({}, {}, {})\n\n".format(self.XPos, self.YPos, self.ZPos))
+                f.write("Last Pos:  \t({}, {}, {})\n".format(error_X, error_Y, error_Z))
+                f.write("Last Glass Pos: \t({}, {}, {})\n".format(self.relative_pos_x, 3.00, self.relative_pos_z))
+                f.write("Last Relative:  \t{}\n".format(round(self.relative_pos,2)))
+                f.write("Tp Command:   \t" + commands[-1])
+            return self.obs.flatten(), -100, True, dict()
+
         self.obs = self.get_observation(world_state) 
 
 
@@ -267,6 +294,7 @@ class PixelJump(gym.Env):
 
         for r in world_state.rewards:
             score = r.getValue()
+            self.step_raw_scores.append(score)
             if score == self.goal_reward:
                 self.relative_pos = 0
             elif score <= self.penalty:
@@ -287,10 +315,10 @@ class PixelJump(gym.Env):
         print("Velocity: {}".format(self.velocity))
         print("Degree:   {}".format(self.degree))
         # print("Theta:    {}".format(theta))
-        # print("Glass   Position: ({},{})".format(XRel, ZRel))
-        # print("Current Position: ({},{})".format(round(self.XPos,2), round(self.ZPos,2)))
+        print("Glass   Position: ({},{})".format(XRel, ZRel))
+        print("Current Position: ({},{})".format(round(self.XPos,2), round(self.ZPos,2)))
         print("Relative distance: {}\n".format(self.relative_pos))
-
+            
         return self.obs.flatten(), score, done, dict()
 
 
@@ -406,8 +434,8 @@ class PixelJump(gym.Env):
     def log_steps(self):
         with open('steps.txt', 'w') as f:
             i = 1 
-            for value, diff in zip(self.step_scores, self.step_relative_diff):
-                f.write("{}\t{}\t{}\n".format(i, value, diff)) 
+            for value, diff, raw in zip(self.step_scores, self.step_relative_diff, self.step_raw_scores):
+                f.write("{}\t{}\t{}\n".format(i, value, diff, raw)) 
                 i += 1
 
 
