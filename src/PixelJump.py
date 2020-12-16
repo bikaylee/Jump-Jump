@@ -145,7 +145,7 @@ class PixelJump(gym.Env):
         if self.episode > 10000:
             self.log_frequency_eps = 50
         elif self.episode > 5000:
-            self.log_frequency_eps /= 100
+            self.log_frequency_eps = 100
 
 
         if int(self.episode % self.log_frequency_eps) == 0:
