@@ -275,7 +275,7 @@ class PixelJump(gym.Env):
             self.log_steps()
             with open('error'+ str(self.steps) + '.txt', 'w') as f:
                 f.write(error.text + '\n')
-                f.write("Missiong Running: ", world_state.is_mission_running)
+                f.write("Missiong Running: " + str(world_state.is_mission_running))
                 f.write("\n\nStep: \t{}\n".format(self.steps))
                 f.write("Curr Pos:  \t({}, {}, {})\n\n".format(self.XPos, self.YPos, self.ZPos))
                 f.write("Last Pos:  \t({}, {}, {})\n".format(error_X, error_Y, error_Z))
