@@ -51,7 +51,7 @@ class PixelJump(gym.Env):
         self.direction_freq = 0.3 # change frequency density
 
         # Jumping range displacement
-        self.velocity_min =  7.81 # range = 4m (Minimum possible distance)
+        self.velocity_min =  8.05 # range = 4.25m (Minimum possible distance)
         self.velocity_max = 11.72 # range = 9m (Maximum possible distance)
 
         # Platform block types
@@ -244,7 +244,7 @@ class PixelJump(gym.Env):
         #     self.agent_host.sendCommand(c)
 
         self.agent_host.sendCommand(commands[-1])
-        time.sleep(2)
+        time.sleep(1)
 
         self.steps += 1
         self.episode_step += 1
@@ -266,22 +266,23 @@ class PixelJump(gym.Env):
             print("Error: ", error.text)
             print("\n\n\n\n\n")
 
-            self.steps -= 1
-            self.episode_step -= 1
-            self.XPos = error_X
-            self.YPos = error_Y
-            self.ZPos = error_Z
             self.log_episode()
             self.log_steps()
             with open('error'+ str(self.steps) + '.txt', 'w') as f:
                 f.write(error.text + '\n')
                 f.write("Missiong Running: " + str(world_state.is_mission_running))
                 f.write("\n\nStep: \t{}\n".format(self.steps))
-                f.write("Curr Pos:  \t({}, {}, {})\n\n".format(self.XPos, self.YPos, self.ZPos))
                 f.write("Last Pos:  \t({}, {}, {})\n".format(error_X, error_Y, error_Z))
                 f.write("Last Glass Pos: \t({}, {}, {})\n".format(self.relative_pos_x, 3.00, self.relative_pos_z))
                 f.write("Last Relative:  \t{}\n".format(round(self.relative_pos,2)))
                 f.write("Tp Command:   \t" + commands[-1])
+
+            self.steps -= 1
+            self.episode_step -= 1
+            self.XPos = error_X
+            self.YPos = error_Y
+            self.ZPos = error_Z
+            
             return self.obs.flatten(), -100, True, dict()
 
         self.obs = self.get_observation(world_state) 
