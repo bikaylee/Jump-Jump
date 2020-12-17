@@ -1,0 +1,10 @@
+AgentHost::sendCommand : commands connection is not open. Is the mission running?
+Missiong Running: False
+
+Step: 	7277
+Curr Pos:  	(2.41, 3.0, 12.07)
+
+Last Pos:  	(1.66, 3.0, 8.3)
+Last Glass Pos: 	(0.78, 3.0, 7.94)
+Last Relative:  	0.95
+Tp Command:   	tp 2.41 3.0 12.07
