@@ -435,7 +435,7 @@ class PixelJump(gym.Env):
         with open('steps.txt', 'w') as f:
             i = 1 
             for value, diff, raw in zip(self.step_scores, self.step_relative_diff, self.step_raw_scores):
-                f.write("{}\t{}\t{}\n".format(i, value, diff, raw)) 
+                f.write("{}\t{}\t{}\t{}\n".format(i, value, diff, raw)) 
                 i += 1
 
 
