@@ -19,19 +19,19 @@ Level of difficulty of maps: (all maps are randomly generated for each mission) 
 4. Restricted degree, incomplete 3x3 platform, glass may randomly be at any block <br>
 5. Wider degree, incomplete 3x3 platform, glass may randomly be at any block <br>
 
-<br><br>
+<br>
 ### Reward System
 Glass Block of Platform: +100 <br>
 Other Block Type of Platform : < 90 based on the relative distance to glass block <br>
 Lava: > -10 based on the relative distance to glass block 
 
-<br><br>
+<br>
 ### State Space
 $$(s^3)(n-1)$$ <br>
 $$s:$$ the max side size of among the platforms (s = 3 for 3x3 platforms) <br>
 $$n:$$ the number of platforms 
 
-<br><br>
+<br>
 ### Observation Space 
 Layers that store information about the next platform with one layer containing all available blocks and the other containing only glass blocks. Also, information of the current platforms or other platforms besides the next platform are excluded. 
 <br>
@@ -39,7 +39,7 @@ Layers that store information about the next platform with one layer containing 
 #### First Layer: 5 x 10 of all available blocks
 #### Second Layer: 5 x 10 of only glass block
 
-<br><br>
+<br>
 ### Action Space
 #### Velocity
 Since degree is taken into account and avoids our agent jumping onto the current platform again, the minimum velocity must be over a distance of 4.25m and the maximum velocity must be under a distance of 9m. The reason for disabling the agent jumping onto the same platform is to get correct and precise observation data for training.
@@ -48,16 +48,15 @@ Since degree is taken into account and avoids our agent jumping onto the current
 #### Degree
 In order to make this project more complex, the degree of turning can enable the agent to jump to any position of the platform. One of our environments has a restriction on degree range, the degree range is calculated based on the current position of the agent in relation to the platform. If the agent is on the right side of the platform, $-\theta _{left}$ is taken into account, else the agent is taking $-\theta _{right}$ into account Here is the equation: 
 <br><br>
-$\theta _{left} = \tan^{-1}{\frac{X_{max} - X_{curr}}{Gap_{min} + 1}}$ <br>
-$\theta _{right} = \tan^{-1}{\frac{X_{X_{curr}}{Gap_{min} + 1}}$ 
+$$\theta _{left} = \tan^{-1}{\frac{X_{max} - X_{curr}}{Gap_{min} + 1}}$$ <br>
+$$\theta _{right} = \tan^{-1}{\frac{X_{X_{curr}}{Gap_{min} + 1}}$$
 
 
-<br><br>
-Our action space is a new implementation based on teleport to achieve the action of projectile motion of jumping. Here are the equations we used for constant gravitational acceleration: <br><br>
+<br>
+Our action space is a new implementation based on teleport to achieve the action of projectile motion of jumping. Here are the equations we used for constant gravitational acceleration: <br>
 
-### Jump Simulation 
 
-#### Projectile Motion in 3D
+### Projectile Motion in 3D (Jump Simulation)
 $$
 \begin{align}
 &Horizontal\,(x), \,\,\,\,a_x = 0\,  &Vertical\,(y), \,\,\,\,a_y = -g \\ \hline
@@ -66,7 +65,7 @@ $$
 \end{align}
 $$
 
-<br><br>
+<br>
 
 ### Machine Learning Algorithm
 PPO
