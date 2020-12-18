@@ -57,6 +57,7 @@ Our action space is a new implementation based on teleport to achieve the action
 
 
 #### Projectile Motion in 3D (Jump Simulation)
+<br>
 $$
 \begin{align}
 &Horizontal\,(x), \,\,\,\,a_x = 0\,  &Vertical\,(y), \,\,\,\,a_y = -g \\ \hline
