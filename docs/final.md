@@ -12,7 +12,7 @@ title:  Final
 ## Approaches
 
 ### Environment 
-Level of difficulty of maps: (all maps are randomly generated for each mission) <br>
+Level of difficulty: (all maps are randomly generated for each mission) <br>
 1. No degree, complete 3x3 platform, glass always centered <br>
 2. No degree, complete 3x3 platform, glass randomly at x = 0 <br>
 3. Restricted degree, complete 3x3 platform, glass randomly at any block <br>
