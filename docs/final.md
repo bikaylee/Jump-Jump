@@ -66,7 +66,8 @@ $$
 \end{align}
 $$
 
-<br>
+<br><br>
+
 ### Machine Learning Algorithm
 PPO
 
