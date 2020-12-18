@@ -41,10 +41,11 @@ Second Layer: 5 x 10 of only glass block
 
 <br>
 ### Action Space
+<br>
 #### Velocity
 Since degree is taken into account and avoids our agent jumping onto the current platform again, the minimum velocity must be over a distance of 4.25m and the maximum velocity must be under a distance of 9m. The reason for disabling the agent jumping onto the same platform is to get correct and precise observation data for training.
-<br>
 
+<br><br>
 #### Degree
 In order to make this project more complex, the degree of turning can enable the agent to jump to any position of the platform. One of our environments has a restriction on degree range, the degree range is calculated based on the current position of the agent in relation to the platform. If the agent is on the right side of the platform, $$-\theta _{left}$$ is taken into account, else the agent is taking $$-\theta _{right}$$ into account Here is the equation: 
 <br><br>
@@ -55,7 +56,7 @@ $$\theta _{right} = \tan^{-1}{\frac{X_{curr}}{Gap_{min} + 1}} $$
 <br>
 Our action space is a new implementation based on teleport to achieve the action of projectile motion of jumping. Here are the equations we used for constant gravitational acceleration: <br>
 
-
+<br>
 #### Projectile Motion in 3D (Jump Simulation)
 <br>
 $$
