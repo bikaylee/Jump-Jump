@@ -56,7 +56,7 @@ $$\theta _{right} = \tan^{-1}{\frac{X_{curr}}{Gap_{min} + 1}} $$
 Our action space is a new implementation based on teleport to achieve the action of projectile motion of jumping. Here are the equations we used for constant gravitational acceleration: <br>
 
 
-### Projectile Motion in 3D (Jump Simulation)
+#### Projectile Motion in 3D (Jump Simulation)
 $$
 \begin{align}
 &Horizontal\,(x), \,\,\,\,a_x = 0\,  &Vertical\,(y), \,\,\,\,a_y = -g \\ \hline
