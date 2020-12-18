@@ -11,7 +11,7 @@ title:  Status
 Some minor changes have been made to the proposed ideas to enhance the creativity and interest of our project. Instead of keeping the platforms in a fixed size (3x3), we added a 1x1 size platform type. The reward of stepping on the 1x1 size platform is the same as stepping on the center block of a 3x3 size platform In addition, we successfully simulated the jumping mechanism of the original game in the minecraft world. A mission generator is implemented to randomly generate platforms for a mission. Our agent can perceive the environment through the states which includes the x, y, z coordinates and its velocity. Our following goal is to complete the implementation of tabular Q-learning algorithms.<br>
 
 
-### Approach
+## Approach
 
 #### Environment & Reward System
 Jumping platform Center: +100 <br>
