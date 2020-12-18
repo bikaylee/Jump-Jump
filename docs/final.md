@@ -36,8 +36,8 @@ $$n:$$ the number of platforms
 Layers that store information about the next platform with one layer containing all available blocks and the other containing only glass blocks. Also, information of the current platforms or other platforms besides the next platform are excluded. 
 <br>
 
-#### First Layer: 5 x 10 of all available blocks
-#### Second Layer: 5 x 10 of only glass block
+First Layer: 5 x 10 of all available blocks
+Second Layer: 5 x 10 of only glass block
 
 <br>
 ### Action Space
