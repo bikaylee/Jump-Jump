@@ -88,5 +88,5 @@ Physics
 Machine Learning Algorithm
 - [RLlib](https://docs.ray.io/en/latest/rllib.html)
 - [RLlib Pytorch Models](https://docs.ray.io/en/latest/rllib-models.html#pytorch-models)
-- [PPO](https://spinningup.openai.com/en/latest/algorithms/ppo.html)
+- [PPO OpenAI](https://spinningup.openai.com/en/latest/algorithms/ppo.html)
 - [PPO algorithm from Kolby Nottingham](https://campuswire.com/c/GAD12D7F8/feed/133)
