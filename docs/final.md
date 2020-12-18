@@ -22,8 +22,8 @@ Level of difficulty of maps: (all maps are randomly generated for each mission) 
 <br>
 ### Reward System
 Glass Block of Platform: +100 <br>
-Other Block Type of Platform : < 90 based on the relative distance to glass block <br>
-Lava: > -10 based on the relative distance to glass block 
+Other Block Type of Platform : < 90,  based on the relative distance to glass block <br>
+Lava: > -10,  based on the relative distance to glass block 
 
 <br>
 ### State Space
@@ -46,10 +46,10 @@ Since degree is taken into account and avoids our agent jumping onto the current
 <br>
 
 #### Degree
-In order to make this project more complex, the degree of turning can enable the agent to jump to any position of the platform. One of our environments has a restriction on degree range, the degree range is calculated based on the current position of the agent in relation to the platform. If the agent is on the right side of the platform, $-\theta _{left}$ is taken into account, else the agent is taking $-\theta _{right}$ into account Here is the equation: 
+In order to make this project more complex, the degree of turning can enable the agent to jump to any position of the platform. One of our environments has a restriction on degree range, the degree range is calculated based on the current position of the agent in relation to the platform. If the agent is on the right side of the platform, $$-\theta _{left}$$ is taken into account, else the agent is taking $$-\theta _{right}$$ into account Here is the equation: 
 <br><br>
 $$\theta _{left} = \tan^{-1}{\frac{X_{max} - X_{curr}}{Gap_{min} + 1}}$$ <br>
-$$\theta _{right} = \tan^{-1}{\frac{X_{X_{curr}}{Gap_{min} + 1}}$$
+$$\theta _{right} = \tan^{-1}{\frac{X_{curr}}{Gap_{min} + 1}} $$
 
 
 <br>
