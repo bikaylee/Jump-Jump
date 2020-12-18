@@ -3,11 +3,11 @@ layout: default
 title:  Status
 ---
 
-### Video
+## Video
 <iframe width="560" height="315" src="https://www.youtube.com/embed/iSaRsq1KTeU" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 
-### Project Summary
+## Project Summary
 Some minor changes have been made to the proposed ideas to enhance the creativity and interest of our project. Instead of keeping the platforms in a fixed size (3x3), we added a 1x1 size platform type. The reward of stepping on the 1x1 size platform is the same as stepping on the center block of a 3x3 size platform In addition, we successfully simulated the jumping mechanism of the original game in the minecraft world. A mission generator is implemented to randomly generate platforms for a mission. Our agent can perceive the environment through the states which includes the x, y, z coordinates and its velocity. Our following goal is to complete the implementation of tabular Q-learning algorithms.<br>
 
 
@@ -81,25 +81,25 @@ $$R_{t+1} + \gamma\max_a Q(S_{t+1},a)- Q(s_t, A_t):$$ temporal difference <br><b
 
 <img src="image/qLearning.png" width="300" />
 
-### Evaluation
+## Evaluation
 
-#### Quantitative
+### Quantitative
 Since the reinforcement learning algorithm is only partially deployed. Currently, we don’t have an accurate measurement of the quantitative values. We thus do not have any graphs to showcase. However, the environmental feedback such as rewards has been established. The agent receives +1 after landing on the non-center block. Landing on the center block rewards the agent with +5. And falling to lava will deduct the reward score by 10. Earning a positive score at the end of the mission signifies that the agent has either reached at least 10 blocks or has reached at least a center block without failing. In addition to gain a further comprehension of the agent’s learning process, we plan to plot its chosen velocities of each state to see how well it is learning and to prevent overfitting. The rewards are subject to be changed.<br>
 
-#### Qualitative
+### Qualitative
 As for qualitative evaluation, the simplest method to examine the overall quality of the project is to watch the agent’s movement and achievement. By watching the movements of the agent, we can make assumptions about whether the agent is choosing movements at random or it is advancing itself. By seeing how far the agent can make us an intuitive conclusion of the performance of the agent.<br><br>
 
 
 
 
 
-### Remaining Goals and Challenges
+## Remaining Goals and Challenges
 
 The current limit of our project is not the algorithm itself but the implementation of the algorithm. We are still in the initial stage of implementing the Q-learning algorithm. We are currently trying to figure out the optimal form of states and the ways to integrate states with Q-learning algorithms. This is the remaining goal of the project. We will schedule an appointment with our mentor to discuss this. A possible challenge we will face is being unable to meet on a regular basis weekly since we are all in different time zones. 
 
 <br><br>
 
-### Resources Used
+## Resources Used
 
 Malmo
 - [Mission Schemas](https://github.com/microsoft/malmo/blob/master/Schemas/MissionHandlers.xsd)
