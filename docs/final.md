@@ -70,8 +70,8 @@ All possible combinations of of Observation States and Action States: <br>
 Layers that store information about the next platform with one layer containing all available blocks and the other containing only glass blocks. Also, information of the current platforms or other platforms besides the next platform are excluded. 
 <br>
 
-**First Layer:** 5 x 10 storing all available blocks information and lava<br>
-**Second Layer:** 5 x 10 storing only glass block information and lava<br>
+**First Layer:** 5 x 10 storing all available blocks information and air<br>
+**Second Layer:** 5 x 10 storing only glass block information and air<br>
 
 <br>
 Previously, our observation space was more difficult to interpret than the final version. The previous observation space takes in only one layer of 5 x 10 storing all information both glass blocks and regular blocks. Also, rewards were ignoring the relative distance and made the agent only have the feedback of observation layers and whether its choice of velocity had either failed or succeeded. Since it lacks information of the relative distance in respect of the goal block, it had a negative influence on the agent’s choice of velocity. Therefore, we had added relative distance to its reward system and separated into two layers for better choice of velocity. 
