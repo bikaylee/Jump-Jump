@@ -53,7 +53,7 @@ Level of difficulty: (all maps are randomly generated for each mission) <br>
 ### Reward System
 **Glass Block of Platform:** +100 <br>
 **Other Block Type of Platform:** < 90,  based on the relative distance to glass block <br>
-**Lava:** > -10,  based on the relative distance to glass block 
+**Lava:** < -10,  based on the relative distance to glass block 
 
 
 <br>
@@ -70,18 +70,21 @@ All possible combinations of of Observation States and Action States: <br>
 Layers that store information about the next platform with one layer containing all available blocks and the other containing only glass blocks. Also, information of the current platforms or other platforms besides the next platform are excluded. 
 <br>
 
-**First Layer:** 5 x 10 of all available blocks <br>
-**Second Layer:** 5 x 10 of only glass block 
+**First Layer:** 5 x 10 storing all available blocks information and lava<br>
+**Second Layer:** 5 x 10 storing only glass block information and lava<br>
 
+<br>
+Previously, our observation space was more difficult to interpret than the final version. The previous observation space takes in only one layer of 5 x 10 storing all information both glass blocks and regular blocks. Also, rewards were ignoring the relative distance and made the agent only have the feedback of observation layers and whether its choice of velocity had either failed or succeeded. Since it lacks information of the relative distance in respect of the goal block, it had a negative influence on the agent’s choice of velocity. Therefore, we had added relative distance to its reward system and separated into two layers for better choice of velocity. 
 
 <br>
 ### Action Space
+<br>
 
 #### Velocity
 Since degree is taken into account and avoids our agent jumping onto the current platform again, the minimum velocity must be over a distance of 4.25m and the maximum velocity must be under a distance of 9m. The reason for disabling the agent jumping onto the same platform is to get correct and precise observation data for training. <br>
 **Velocity = [8.05, 11.72]**
 
-<br><br>
+<br>
 #### Degree
 In order to make this project more complex, the degree of turning can enable the agent to jump to any position of the platform. One of our environments has a restriction on degree range, the degree range is calculated based on the current position of the agent in relation to the platform. If the agent is on the right side of the platform, $$-\theta _{left}$$ is taken into account, else the agent is taking $$-\theta _{right}$$ into account Here is the equation: 
 <br><br>
@@ -93,12 +96,13 @@ In another environment, we granted the agent a relatively more complete control 
 **Degree = [-53, 53]**
 
 <br>
-**##### Projectile Motion in 3D (Jump Simulation)**
+#### Projectile Motion in 3D (Jump Simulation)
 The results and the process of the actions are retrieved utilizing the projectile motions formulas. Previously our projectile motions calculation was limited to two dimensions (Y displacement and Z displacement). Now our projectile movement function is able to calculate the projectile motion in three dimensions (X, Y, and Z) to simulate the projectile motion under the influence of horizontal degrees. Here are the equations we used for constant gravitational acceleration: <br>
 
-$$\theta_V$$: Vertical degree <br>
-$$\theta_H$$: Horizontal degree <br>
+$$\theta_V$$: Vertical degree
+$$\theta_H$$: Horizontal degree
 
+<br>
 $$
 \begin{array} {ll}
 &Horizontal\,(x)\, & &Distal\,(z)\, & &Vertical\,(y)\, \\ \hline
@@ -107,6 +111,8 @@ $$
 &\Delta x = V_x \Delta t\, & &\Delta z = V_z \Delta t\, &  &\Delta y = V_y \Delta t + \frac{1}{2} {\Delta t}^2 \\
 \end{array}
 $$
+
+<br>
 
 Here is our implementation: 
 ```
