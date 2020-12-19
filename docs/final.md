@@ -75,7 +75,7 @@ Layers that store information about the next platform with one layer containing 
 
 <br>
 
-<img src="image/Observation.png"> Figure 4. Observation Layers<br>
+<img src="image/Observational.png"> Figure 4. Observation Layers<br>
 
 <br>
 Previously, our observation space was more difficult to interpret than the final version. The previous observation space takes in only one layer of 5 x 10 storing all information both glass blocks and regular blocks. Also, rewards were ignoring the relative distance and made the agent only have the feedback of observation layers and whether its choice of velocity had either failed or succeeded. Since it lacks information of the relative distance in respect of the goal block, it had a negative influence on the agent’s choice of velocity. Therefore, we had added relative distance to its reward system and separated into two layers for better choice of velocity. 
