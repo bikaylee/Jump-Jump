@@ -21,18 +21,18 @@ Level of difficulty: (all maps are randomly generated for each mission) <br>
 
 <br>
 ### Reward System
-Glass Block of Platform: +100 <br>
-Other Block Type of Platform : < 90,  based on the relative distance to glass block <br>
-Lava: > -10,  based on the relative distance to glass block 
+**Glass Block of Platform:** +100 <br>
+**Other Block Type of Platform:** < 90,  based on the relative distance to glass block <br>
+**Lava:** > -10,  based on the relative distance to glass block 
 
 
 <br>
 ### State Space
 All possible combinations of of Observation States and Action States: <br>
 
-**Observation State Space:** $$2^{2*5*10} = 2^{100}$$ <br>
+**Observation State Space:** $$2^{2 \cdot 5 \cdot 10} = 2^{100}$$ <br>
 **Action State Space:** $$\infty$$, infinite number of states because the variables of the action space are continuous. <br>
-**State space:** $$\infty * 2^{100}$$ => $$\infty$$ 
+**State space:** $$\infty \cdot 2^{100}$$ => $$\infty$$<br>
 
 
 <br>
@@ -40,15 +40,15 @@ All possible combinations of of Observation States and Action States: <br>
 Layers that store information about the next platform with one layer containing all available blocks and the other containing only glass blocks. Also, information of the current platforms or other platforms besides the next platform are excluded. 
 <br>
 
-First Layer: 5 x 10 of all available blocks <br>
-Second Layer: 5 x 10 of only glass block 
+**First Layer:** 5 x 10 of all available blocks <br>
+**Second Layer:** 5 x 10 of only glass block 
 
 <br>
 ### Action Space
 <br>
 #### Velocity
-Since degree is taken into account and avoids our agent jumping onto the current platform again, the minimum velocity must be over a distance of 4.25m and the maximum velocity must be under a distance of 9m. The reason for disabling the agent jumping onto the same platform is to get correct and precise observation data for training.
-Velocity = [8.05, 11.72]
+Since degree is taken into account and avoids our agent jumping onto the current platform again, the minimum velocity must be over a distance of 4.25m and the maximum velocity must be under a distance of 9m. The reason for disabling the agent jumping onto the same platform is to get correct and precise observation data for training. <br>
+**Velocity = [8.05, 11.72]**
 
 <br><br>
 #### Degree
@@ -57,8 +57,8 @@ In order to make this project more complex, the degree of turning can enable the
 $$\theta _{left} = \tan^{-1}{\frac{X_{max} - X_{curr}}{Gap_{min} + 1}}$$ <br>
 $$\theta _{right} = \tan^{-1}{\frac{X_{curr}}{Gap_{min} + 1}} $$ <br> 
 
-In another environment, we granted the agent a relatively more complete control of the degree. However, an increase to the range of choices, especially when it is a continuous state, can greatly impact the reinforcement learning process by adding more noise and complexity to the model. We would want to choose an optimal range of degrees that will add challenge to the agent’s learning process without making the model over complex. The max degree the agent required to travel from one platform to the next platform in the most extreme case is approximately 53 degree. In this environment, the agent is allowed to choose from a larger range of degrees [-53, 53] without other restrictions.
-Degree = [-53, 53]
+In another environment, we granted the agent a relatively more complete control of the degree. However, an increase to the range of choices, especially when it is a continuous state, can greatly impact the reinforcement learning process by adding more noise and complexity to the model. We would want to choose an optimal range of degrees that will add challenge to the agent’s learning process without making the model over complex. The max degree the agent required to travel from one platform to the next platform in the most extreme case is approximately 53 degree. In this environment, the agent is allowed to choose from a larger range of degrees [-53, 53] without other restrictions. <br>
+**Degree = [-53, 53]**
 
 <br>
 #### Projectile Motion in 3D (Jump Simulation)
