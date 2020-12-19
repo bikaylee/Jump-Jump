@@ -1,13 +1,13 @@
----
-layout: default
-title:  Final
----
-
 ## Video
-<iframe width="560" height="315" src=" " frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
 
 ## Project Summary:
+
+Use another level-two header to start a Project Summary section. Write a few paragraphs summarizing the goals of the project (yes, yet again, but updated/improved version from the status). In particular, make sure that the problem is clearly defined here, and feel free to use an image or so to set up the task. Part of the evaluation will be on how well you are able to motivate the challenges of the problem,i.e. why is it not trivial, and why you need AI/ML algorithms to solve it.
+
+
+
+Compared with the previous version, we made a huge update in the final version. We added the ability of the agent to observe two different layers, the block layer and the glass layer. We also improved the agent's ability to compute jump angles and velocities, and we used PPO so that the agent can perform continuous actions. In order to better observe the agent's resilience to different environments, we added four different levels of difficulty. For the first difficulty, a complete 3x3 grid and then glass in the middle of the grid. However, as the difficulty increases, the number of grids decreases reasonably and then glass is randomly placed in any of the grids. In this project, although we aimed for the agent to jump further, the agent successfully learned to jump to the grid that scored more points instead of the grid that was further away. 
+
 
 ## Approaches
 
@@ -61,24 +61,66 @@ In another environment, we granted the agent a relatively more complete control 
 **Degree = [-53, 53]**
 
 <br>
-#### Projectile Motion in 3D (Jump Simulation)
+##### Projectile Motion in 3D (Jump Simulation)
 The results and the process of the actions are retrieved utilizing the projectile motions formulas. Previously our projectile motions calculation was limited to two dimensions (Y displacement and Z displacement). Now our projectile movement function is able to calculate the projectile motion in three dimensions (X, Y, and Z) to simulate the projectile motion under the influence of horizontal degrees. Here are the equations we used for constant gravitational acceleration: <br>
+
+$$V\theta$$: Vertical degree
+$$H\theta$$: Horizontal degree
 
 <br>
 $$
 \begin{align}
-&Horizontal\,(x), \,\,\,\,a_x = 0\,  &Vertical\,(y), \,\,\,\,a_y = -g \\ \hline
-&V_x = V \cdot cos\theta\,  &V_y = V \cdot sin\theta + a_y \cdot \Delta t \\
-&\Delta x = V_x \cdot \Delta t\,    &\Delta y = V_y \cdot \Delta t + \frac{1}{2} \cdot {\Delta t}^2 \\
+&Horizontal\,(x), \,\,\,\,a_x = 0\, &Frontal\,(z), \,\,\,\,a_z = 0\, &Vertical\,(y), \,\,\,\,a_y = -g \\ \hline
+&V_x = V \cdot cos V\theta \cdot cos H\theta\, &V_z = V \cdot cos V\theta \cdot sin H\theta\, &V_y = V \cdot sin V\theta + a_y \cdot \Delta t \\
+&\Delta x = V_x \cdot \Delta t\, &\Delta z = V_z \cdot \Delta t\,   &\Delta y = V_y \cdot \Delta t + \frac{1}{2} \cdot {\Delta t}^2 \\
 \end{align}
 $$
 
 <br>
 
 ### Machine Learning Algorithm
+This project includes continuous actions for both degree and velocity, so the environment is difficult and the state space is fairly large. Deep reinforcement learning of PPO is used in solving this problem. 
+
 PPO
 
+
+
+
+
+
+
+
+
+
 ## Evaluation
+An important aspect of your project, as I’ve mentioned several times now, is evaluating your project. Be clear and precise about describing the evaluation setup, for both quantitative and qualitative results. Present the results to convince the reader that you have solved the problem, to whatever extent you claim you have. Use plots, charts, tables, screenshots, figures, etc. as needed. I expect you will need at least a few paragraphs to describe each type of evaluation that you perform.
+
+
+
+
+
+### Qualitative
+
+
+
+### Quantitative
+#### Environment 1
+In difficulty one, the map generated for the agent would be always a 3x3 map with a center block in the middle of every platform. Also the agent's action state only allows him to jump forward in a velocity range from 8.05 to 11.72. 
+At the beginning of the process, we found that the agent would tend to choose the distance close to itself to perform a jump. After 15 hours training, the ability of this agent to learn to jump further was not very outstanding; The agent would tend to jump to mainly three positions. Firstly, the position closer to himself, and then fall into the lava. Secondly, the position between glass_type and regular_block. Thirdly, the position that is very far away from himself. 
+
+#### Environment 2
+In difficulty two, the map generated for the agent would be slightly different than the map at difficulty 1. When the platform remains completed in difficulty two, the position of the glass_type_block(center block) would either be one block forward or one block behind to increase the difficulty for the agent to learn. The agent would also pick a velocity in the range from 8.05 to 11.72 with no turning degree. 
+In the testing process of difficulty two, the agent would perform like what he did in the difficulty one, by choosing the maximum speed and minimum speed to perform a jump. Later on, the agent will choose to land closer to the glass_type_block. Especially, he will likely choose the position between the regular_block and the glass_type_block.
+
+#### Environment 3
+
+#### Environment 4
+
+#### Environment 5
+
+
+
+
 
 ## References
 
@@ -94,5 +136,7 @@ Physics
 Machine Learning Algorithm
 - [RLlib](https://docs.ray.io/en/latest/rllib.html)
 - [RLlib Pytorch Models](https://docs.ray.io/en/latest/rllib-models.html#pytorch-models)
-- [PPO OpenAI](https://spinningup.openai.com/en/latest/algorithms/ppo.html)
+- [PPO](https://spinningup.openai.com/en/latest/algorithms/ppo.html)
 - [PPO algorithm from Kolby Nottingham](https://campuswire.com/c/GAD12D7F8/feed/133)
+
+
