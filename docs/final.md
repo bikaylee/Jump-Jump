@@ -93,7 +93,7 @@ In another environment, we granted the agent a relatively more complete control 
 **Degree = [-53, 53]**
 
 <br>
-##### Projectile Motion in 3D (Jump Simulation)
+**##### Projectile Motion in 3D (Jump Simulation)**
 The results and the process of the actions are retrieved utilizing the projectile motions formulas. Previously our projectile motions calculation was limited to two dimensions (Y displacement and Z displacement). Now our projectile movement function is able to calculate the projectile motion in three dimensions (X, Y, and Z) to simulate the projectile motion under the influence of horizontal degrees. Here are the equations we used for constant gravitational acceleration: <br>
 
 $$\theta_V$$: Vertical degree <br>
@@ -108,6 +108,38 @@ $$
 \end{array}
 $$
 
+Here is our implementation: 
+```
+def movement (self, v, x, y, z, degree):
+  ax = 0
+  az = 0 
+  ay = -9.8  
+  t = 0.08
+  d = np.radians(70) 
+  degree = -1*degree+90
+
+  M = []
+
+  vx = v * np.cos(d) * np.cos(np.radians(degree)) # cos(degree) give the ratio of x after transformation
+  vz = v * np.cos(d) * np.sin(np.radians(degree)) # sin(degree) give the ratio of z after transformation
+  vy = v * np.sin(d)
+
+  while True:
+      x = x + vx*t
+      z = z + vz*t
+      y = y + vy*t + 0.5*ay*(t**2)
+
+      vx = vx + ax*t
+      vz = vz + az*t
+      vy = vy + ay*t
+
+      if y < self.floor:
+          break
+
+      M.append([x,y,z])
+
+  return M
+```
 
 <br><br>
 ## Evaluation
