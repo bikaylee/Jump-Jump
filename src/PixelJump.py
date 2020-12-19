@@ -31,8 +31,9 @@ class PixelJump(gym.Env):
         # 1. Complete Platform with goal block always centered
         # 2. Complete Platform with goal block randomly at z-axis
         # 3. Complete Platform with goal block randomly placed
-        # 4. Incomplete Platform with goal block randomly placed or might not have one
-        self.difficulty = 4
+        # 4. Incomplete Platform with restricted range
+        # 5. Incomplete Platform with wider range 
+        self.difficulty = 3
 
         # Map size
         self.size = 300
@@ -127,7 +128,7 @@ class PixelJump(gym.Env):
 
 
         if self.episode_step >= 1 and self.episode > 0:     
-            print("Episode {} return: {}".format(self.episode, self.episode_score/self.episode_step))
+            print("Episode {} return: {}".format(self.episode, round(self.episode_score/self.episode_step,4)))
             print("Avg return: {}\n".format(sum(self.episode_scores)/(self.episode)))
             print("========================================================")    
 
@@ -225,16 +226,16 @@ class PixelJump(gym.Env):
         error_Y = self.YPos
         error_Z = self.ZPos
 
-        self.velocity = self.velocity_min + ((self.velocity_max-self.velocity_min) * action[0])
+        self.velocity = round(self.velocity_min + ((self.velocity_max-self.velocity_min) * action[0]),4)
 
         left_theta = np.degrees(np.arctan((3-self.XPos) / (self.gap_min+1)))
         right_theta = np.degrees(np.arctan(self.XPos / (self.gap_min+1)))
         theta = left_theta + right_theta
 
         if self.XPos >= 1.5:
-            self.degree = -left_theta + theta * action[1]
+            self.degree = round(-left_theta + theta * action[1],2)
         elif self.XPos < 1.5:
-            self.degree = -right_theta + theta * action[1]
+            self.degree = round(-right_theta + theta * action[1],2)
 
         movements = self.movement(self.velocity, self.XPos, self.YPos, self.ZPos, self.degree)
         commands = self.perform_jump(movements)
@@ -290,7 +291,7 @@ class PixelJump(gym.Env):
 
         # Get Reward
         score = 0
-        self.relative_pos = np.sqrt((self.XPos-XRel)**2 + (self.ZPos-ZRel)**2)
+        self.relative_pos = round(np.sqrt((self.XPos-XRel)**2 + (self.ZPos-ZRel)**2),4)
         self.step_relative_diff.append(self.relative_pos)
 
         for r in world_state.rewards:
@@ -305,6 +306,7 @@ class PixelJump(gym.Env):
                 score = self.goal_reward-10
 
         score -= (self.relative_pos*10)
+        score = round(score, 4)
 
         self.episode_score += score
         self.step_scores.append(score)
@@ -367,16 +369,16 @@ class PixelJump(gym.Env):
                             grid_glass.append(0)
                             grid_blocks.append(1)
                             if firstBlock:
-                                self.relative_pos_x = self.XPos + (blocks%5-2)
-                                self.relative_pos_z =  self.ZPos + row
+                                self.relative_pos_x = round(self.XPos + (blocks%5-2),2)
+                                self.relative_pos_z = round(self.ZPos + row,2)
                                 firstBlock = False
                             if platform_row == 0:
                                 platform_row = row
                         elif x == "glass":
                             grid_blocks.append(1)
                             grid_glass.append(1)
-                            self.relative_pos_x = self.XPos + (blocks%5-2)
-                            self.relative_pos_z = self.ZPos + row
+                            self.relative_pos_x = round(self.XPos + (blocks%5-2),2)
+                            self.relative_pos_z = round(self.ZPos + row,2)
                         else:
                             grid_blocks.append(0)
                             grid_glass.append(0)
