@@ -28,11 +28,11 @@ Lava: > -10,  based on the relative distance to glass block
 
 <br>
 ### State Space
-All possible combinations of of Observation States and Action States:
+All possible combinations of of Observation States and Action States: <br>
 
-**Observation State Space:** $$2^{2*5*10} = 2^{100}$$
-**Action State Space:** $$\infty$$, infinite number of states because the variables of the action space are continuous.
-**State space:** $$\infty * 2^{100}$$ => $$\infty$$
+**Observation State Space:** $$2^{2*5*10} = 2^{100}$$ <br>
+**Action State Space:** $$\infty$$, infinite number of states because the variables of the action space are continuous. <br>
+**State space:** $$\infty * 2^{100}$$ => $$\infty$$ 
 
 
 <br>
@@ -55,17 +55,15 @@ Velocity = [8.05, 11.72]
 In order to make this project more complex, the degree of turning can enable the agent to jump to any position of the platform. One of our environments has a restriction on degree range, the degree range is calculated based on the current position of the agent in relation to the platform. If the agent is on the right side of the platform, $$-\theta _{left}$$ is taken into account, else the agent is taking $$-\theta _{right}$$ into account Here is the equation: 
 <br><br>
 $$\theta _{left} = \tan^{-1}{\frac{X_{max} - X_{curr}}{Gap_{min} + 1}}$$ <br>
-$$\theta _{right} = \tan^{-1}{\frac{X_{curr}}{Gap_{min} + 1}} $$
+$$\theta _{right} = \tan^{-1}{\frac{X_{curr}}{Gap_{min} + 1}} $$ <br> 
 
 In another environment, we granted the agent a relatively more complete control of the degree. However, an increase to the range of choices, especially when it is a continuous state, can greatly impact the reinforcement learning process by adding more noise and complexity to the model. We would want to choose an optimal range of degrees that will add challenge to the agent’s learning process without making the model over complex. The max degree the agent required to travel from one platform to the next platform in the most extreme case is approximately 53 degree. In this environment, the agent is allowed to choose from a larger range of degrees [-53, 53] without other restrictions.
 Degree = [-53, 53]
 
-
-<br>
-The results and the process of the actions are retrieved utilizing the projectile motions formulas. Previously our projectile motions calculation was limited to two dimensions (Y displacement and Z displacement). Now our projectile movement function is able to calculate the projectile motion in three dimensions (X, Y, and Z) to simulate the projectile motion under the influence of horizontal degrees. Here are the equations we used for constant gravitational acceleration: <br>
-
 <br>
 #### Projectile Motion in 3D (Jump Simulation)
+The results and the process of the actions are retrieved utilizing the projectile motions formulas. Previously our projectile motions calculation was limited to two dimensions (Y displacement and Z displacement). Now our projectile movement function is able to calculate the projectile motion in three dimensions (X, Y, and Z) to simulate the projectile motion under the influence of horizontal degrees. Here are the equations we used for constant gravitational acceleration: <br>
+
 <br>
 $$
 \begin{align}
