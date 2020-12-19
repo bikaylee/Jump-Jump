@@ -38,7 +38,7 @@ With RLlib, the OpenAI Gym is used for our project application because our proje
 Breaking down this project in particular, our overall aspect in terms of conceptual data flow consists of environment, preprocessor, and policy class (figure 3). Except for the environment, the RLlib built-in preprocessor is used and the policy class comes with the PPO trainer along with the use of PyTorch network. <br>
 
 <br>
-<img src="image/Customization.png" width=1000> Figure 3. Data Flow <br>
+<img src="image/Customization.png" width=600> Figure 3. Data Flow <br>
 <br>
 
 ### Environment 
