@@ -11,7 +11,7 @@ Compared with the previous version, we made a huge update in the final version. 
 This project includes continuous actions for both degree and velocity, so the environment is difficult and the state space is extremely large. As it was stated in both  our proposal and status report, we intended to solve the problem with the implementation of Deep Q learning. However, it was not a realistic choice. Due to the property of the continuous variables, we have an infinite number of state spaces(continuous action space). If we were to use DQN, action space must be converted to a discrete space while other inputs remain the same. A continuous state space will certainly cause the DQN model to overfit and to fail. As shown in figure, DQN won’t be able to locate the action with the highest reward because it is impossible to loop through all the accessible actions from an infinitely large action space. And using only discrete movements would greatly decrease the difficulty of the problem, we consequently decided to retain the continuous state space and moved to PPO(Proximal Policy Optimization), an algorithm that is on-policy instead of off-policy.
 <br><br>
 
-<img src="image/PPO.jpeg" width=250> Figure 1.<br>
+<img src="image/PPO.jpeg" width=600> Figure 1.<br>
 
 <br><br>
 
@@ -25,20 +25,21 @@ $$r_t:$$ ratio of the probability under new and old policies <br>
 $$\hat{A}_t:$$ estimated advantage at time t <br>
 $$\epsilon:$$ hyperparameter, usually 0.1 or 0.2 <br>
 
+<br><br>
 #### RLlib and PPO
 
-<img src="image/RLlib.png" width=250> Figure 2. RLlib Structure<br>
-
-With RLlib, the OpenAI Gym is used for our project application because our project is single agent and single policy. With gym.Env, we only needed to specify our observation space and action space (details listed below). Since this is a single agent project, the agent’s action control is based on the derivation of the policy gradient loss function. This policy uses deep neural networks for control with subtle choice of actions, so the improvement of performance is exceedingly slow and it seems to be the case in our project where the boundary velocity is chosen more frequently than others in which it causes the agent to die relatively easily. Therefore, it will create much more noise in returns and have an extremely poor learning rate that requires a large amount of time to train our model. 
-
-<br><br>
-
-Breaking down this project in particular, our overall aspect in terms of conceptual data flow consists of environment, preprocessor, and policy class (figure 3). Except for the environment, the RLlib built-in preprocessor is used and the policy class comes with the PPO trainer along with the use of PyTorch network. <br>
-
-<img src="image/Customization.png" width=250> Figure 3. Data Flow <br>
+<br>
+<img src="image/RLlib.png" width=600> Figure 2. RLlib Structure<br>
 
 <br>
+With RLlib, the OpenAI Gym is used for our project application because our project is single agent and single policy. With gym.Env, we only needed to specify our observation space and action space (details listed below). Since this is a single agent project, the agent’s action control is based on the derivation of the policy gradient loss function. This policy uses deep neural networks for control with subtle choice of actions, so the improvement of performance is exceedingly slow and it seems to be the case in our project where the boundary velocity is chosen more frequently than others in which it causes the agent to die relatively easily. Therefore, it will create much more noise in returns and have an extremely poor learning rate that requires a large amount of time to train our model. 
 
+<br>
+Breaking down this project in particular, our overall aspect in terms of conceptual data flow consists of environment, preprocessor, and policy class (figure 3). Except for the environment, the RLlib built-in preprocessor is used and the policy class comes with the PPO trainer along with the use of PyTorch network. <br>
+
+<br>
+<img src="image/Customization.png" width=600> Figure 3. Data Flow <br>
+<br>
 
 ### Environment 
 Level of difficulty: (all maps are randomly generated for each mission) <br>
@@ -75,7 +76,6 @@ Layers that store information about the next platform with one layer containing 
 
 <br>
 ### Action Space
-<br>
 
 #### Velocity
 Since degree is taken into account and avoids our agent jumping onto the current platform again, the minimum velocity must be over a distance of 4.25m and the maximum velocity must be under a distance of 9m. The reason for disabling the agent jumping onto the same platform is to get correct and precise observation data for training. <br>
@@ -96,10 +96,9 @@ In another environment, we granted the agent a relatively more complete control 
 ##### Projectile Motion in 3D (Jump Simulation)
 The results and the process of the actions are retrieved utilizing the projectile motions formulas. Previously our projectile motions calculation was limited to two dimensions (Y displacement and Z displacement). Now our projectile movement function is able to calculate the projectile motion in three dimensions (X, Y, and Z) to simulate the projectile motion under the influence of horizontal degrees. Here are the equations we used for constant gravitational acceleration: <br>
 
-$$\theta_V$$: Vertical degree
-$$\theta_H$$: Horizontal degree
+$$\theta_V$$: Vertical degree <br>
+$$\theta_H$$: Horizontal degree <br>
 
-<br>
 $$
 \begin{array} {ll}
 &Horizontal\,(x)\, & &Distal\,(z)\, & &Vertical\,(y)\, \\ \hline
@@ -110,7 +109,7 @@ $$
 $$
 
 
-
+<br><br>
 ## Evaluation
 
 ### Qualitative
@@ -154,3 +153,7 @@ Machine Learning Algorithm
 - [PPO algorithm from Kolby Nottingham](https://campuswire.com/c/GAD12D7F8/feed/133)
 
 
+Tools 
+- [Draw.io](http://draw.io/)
+- [Jupyter Notebook](https://docs.anaconda.com/ae-notebooks/user-guide/basic-tasks/apps/jupyter/)
+- [LaTex Overleaf](https://www.overleaf.com/learn)
