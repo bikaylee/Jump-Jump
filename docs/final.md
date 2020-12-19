@@ -29,7 +29,7 @@ $$\epsilon:$$ hyperparameter, usually 0.1 or 0.2 <br>
 #### RLlib and PPO
 
 <br>
-<img src="image/RLlib.png" width=600> Figure 2. RLlib Structure<br>
+<img src="image/RLlib.png"> Figure 2. RLlib Structure<br>
 
 <br>
 With RLlib, the OpenAI Gym is used for our project application because our project is single agent and single policy. With gym.Env, we only needed to specify our observation space and action space (details listed below). Since this is a single agent project, the agent’s action control is based on the derivation of the policy gradient loss function. This policy uses deep neural networks for control with subtle choice of actions, so the improvement of performance is exceedingly slow and it seems to be the case in our project where the boundary velocity is chosen more frequently than others in which it causes the agent to die relatively easily. Therefore, it will create much more noise in returns and have an extremely poor learning rate that requires a large amount of time to train our model. 
@@ -38,7 +38,7 @@ With RLlib, the OpenAI Gym is used for our project application because our proje
 Breaking down this project in particular, our overall aspect in terms of conceptual data flow consists of environment, preprocessor, and policy class (figure 3). Except for the environment, the RLlib built-in preprocessor is used and the policy class comes with the PPO trainer along with the use of PyTorch network. <br>
 
 <br>
-<img src="image/Customization.png" width=700> Figure 3. Data Flow <br>
+<img src="image/Customization.png"> Figure 3. Data Flow <br>
 <br>
 
 ### Environment 
