@@ -1,12 +1,12 @@
 ## Video
 
-## Project Summary:
+## Project Summary
 The purpose of our project is to let the agent observe his surrounding platforms and then pick an initial velocity from a continuous action space to ensure that the agent can land on various positions of the next platform and hopefully jump onto the glass (goal) block for greater reward. In the final part, we not only allow the agent to choose its own velocity, but we also let the agent choose an angle so that the agent can make a 3D projectile motion jump onto various blocks. We previously used the Q-learning algorithm to solve this problem. However, since velocity and degree are both continuous space, Q-learning cannot perform such calculations. Therefore, we changed our algorithm to the PPO algorithm. By using the PPO algorithm, the agent can learn how to make clever decisions to get more points and jump further with simpler tuning of hyperparameters and less modification to the structure. However, the learning time of the agent is greatly increased due to its policy gradient loss function. <br><br>
 Compared with the previous version, we made a huge update in the final version. Since our previous framework can be easily solved with a glass (goal) block always at the center, it’s not trivial in using a machine learning algorithm. The environment and actions offers a higher degree of freedom for the agent. Therefore, the ability of turning and jumping in 3D space is more complex and requires more time into testing and running. Also, we added the ability of observing two different layers, the block layer and the glass(goal block) layer. We also improved the agent's ability to compute jump angles and velocities, and we used PPO so that the agent can perform continuous actions. In order to better observe the agent's resilience to different environments, we added four different levels of difficulty. For the first difficulty, a complete 3x3 platform and then glass(goal) block in the middle of the platform. However, as the difficulty increases, the number of blocks decreases reasonably and then the glass(goal) block is randomly placed in any of the platforms. In this project, although we aimed for the agent to jump further, the agent successfully learned to jump to the platform that scored more points instead of the platform that was further away. 
 
 
 ## Approaches
-
+<br>
 ### Machine Learning Algorithm
 This project includes continuous actions for both degree and velocity, so the environment is difficult and the state space is extremely large. As it was stated in both  our proposal and status report, we intended to solve the problem with the implementation of Deep Q learning. However, it was not a realistic choice. Due to the property of the continuous variables, we have an infinite number of state spaces(continuous action space). If we were to use DQN, action space must be converted to a discrete space while other inputs remain the same. A continuous state space will certainly cause the DQN model to overfit and to fail. As shown in figure, DQN won’t be able to locate the action with the highest reward because it is impossible to loop through all the accessible actions from an infinitely large action space. And using only discrete movements would greatly decrease the difficulty of the problem, we consequently decided to retain the continuous state space and moved to PPO(Proximal Policy Optimization), an algorithm that is on-policy instead of off-policy.
 <br><br>
@@ -29,7 +29,7 @@ $$\epsilon:$$ hyperparameter, usually 0.1 or 0.2 <br>
 #### RLlib and PPO
 
 <br>
-<img src="image/RLlib.png" width=300> Figure 2. RLlib Structure<br>
+<img src="image/RLlib.png" width=600> Figure 2. RLlib Structure<br>
 
 <br>
 With RLlib, the OpenAI Gym is used for our project application because our project is single agent and single policy. With gym.Env, we only needed to specify our observation space and action space (details listed below). Since this is a single agent project, the agent’s action control is based on the derivation of the policy gradient loss function. This policy uses deep neural networks for control with subtle choice of actions, so the improvement of performance is exceedingly slow and it seems to be the case in our project where the boundary velocity is chosen more frequently than others in which it causes the agent to die relatively easily. Therefore, it will create much more noise in returns and have an extremely poor learning rate that requires a large amount of time to train our model. 
@@ -38,7 +38,7 @@ With RLlib, the OpenAI Gym is used for our project application because our proje
 Breaking down this project in particular, our overall aspect in terms of conceptual data flow consists of environment, preprocessor, and policy class (figure 3). Except for the environment, the RLlib built-in preprocessor is used and the policy class comes with the PPO trainer along with the use of PyTorch network. <br>
 
 <br>
-<img src="image/Customization.png" width=600> Figure 3. Data Flow <br>
+<img src="image/Customization.png" width=700> Figure 3. Data Flow <br>
 <br>
 
 ### Environment 
