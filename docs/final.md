@@ -17,7 +17,7 @@ This project includes continuous actions for both degree and velocity, so the en
 
 PPO is an on-policy algorithm that derives policy from the current estimation of the optimal policy and chooses the optimal through the policy. In other words, it makes updates based on the transitions that were obtained by the current policy instead of making an update according to the ideal action as it was in DQN. Here is the equation of PPO, and it’s a built-in trainer of RLlib that is primarily used in this project: <br><br>
 
-$$L^{CLIP}(\theta) = \hat{E}_t[min(r_t(\theta)\hat{A}_t, clip(r_t(\theta), 1-\epsilon, 1+\epsilon)\hat{A}_t)]$$<br>
+**$$L^{CLIP}(\theta) = \hat{E}_t[min(r_t(\theta)\hat{A}_t, clip(r_t(\theta), 1-\epsilon, 1+\epsilon)\hat{A}_t)]$$<br>**
 
 $$\theta:$$ the policy parameter <br>
 $$\hat{E}_t:$$ empirical expectation over timesteps <br>
@@ -99,7 +99,7 @@ In another environment, we granted the agent a relatively more complete control 
 #### Projectile Motion in 3D (Jump Simulation)
 The results and the process of the actions are retrieved utilizing the projectile motions formulas. Previously our projectile motions calculation was limited to two dimensions (Y displacement and Z displacement). Now our projectile movement function is able to calculate the projectile motion in three dimensions (X, Y, and Z) to simulate the projectile motion under the influence of horizontal degrees. Here are the equations we used for constant gravitational acceleration: <br>
 
-$$\theta_V$$: Vertical degree
+$$\theta_V$$: Vertical degree <br>
 $$\theta_H$$: Horizontal degree
 
 <br>
