@@ -2,12 +2,6 @@
 
 ## Project Summary:
 
-Use another level-two header to start a Project Summary section. Write a few paragraphs summarizing the goals of the project (yes, yet again, but updated/improved version from the status). In particular, make sure that the problem is clearly defined here, and feel free to use an image or so to set up the task. Part of the evaluation will be on how well you are able to motivate the challenges of the problem,i.e. why is it not trivial, and why you need AI/ML algorithms to solve it.
-
-
-
-Compared with the previous version, we made a huge update in the final version. We added the ability of the agent to observe two different layers, the block layer and the glass layer. We also improved the agent's ability to compute jump angles and velocities, and we used PPO so that the agent can perform continuous actions. In order to better observe the agent's resilience to different environments, we added four different levels of difficulty. For the first difficulty, a complete 3x3 grid and then glass in the middle of the grid. However, as the difficulty increases, the number of grids decreases reasonably and then glass is randomly placed in any of the grids. In this project, although we aimed for the agent to jump further, the agent successfully learned to jump to the grid that scored more points instead of the grid that was further away. 
-
 
 ## Approaches
 
@@ -69,12 +63,14 @@ $$H\theta$$: Horizontal degree
 
 <br>
 $$
-\begin{align}
-&Horizontal\,(x), \,\,\,\,a_x = 0\, &Frontal\,(z), \,\,\,\,a_z = 0\, &Vertical\,(y), \,\,\,\,a_y = -g \\ \hline
-&V_x = V \cdot cos V\theta \cdot cos H\theta\, &V_z = V \cdot cos V\theta \cdot sin H\theta\, &V_y = V \cdot sin V\theta + a_y \cdot \Delta t \\
-&\Delta x = V_x \cdot \Delta t\, &\Delta z = V_z \cdot \Delta t\,   &\Delta y = V_y \cdot \Delta t + \frac{1}{2} \cdot {\Delta t}^2 \\
-\end{align}
+\begin{array} {ll}
+&Horizontal\,(x)\, & &Frontal\,(z)\, & &Vertical\,(y)\, \\ \hline
+&V_x = V cos \theta_V \cdot cos \theta_H\, & &V_z = V cos \theta_V \cdot sin \theta_H\, & &V_y = V sin \theta_V + a_y \Delta t \\
+&a_x = 0\,  & &\,a_z = 0\, & &  \,a_y = -g \\
+&\Delta x = V_x \Delta t\, & &\Delta z = V_z \Delta t\, &  &\Delta y = V_y \Delta t + \frac{1}{2} {\Delta t}^2 \\
+\end{array}
 $$
+
 
 <br>
 
