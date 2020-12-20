@@ -183,18 +183,29 @@ Figure 5.5. Wider degree, incomplete 3x3 platform, glass may randomly be at any 
 ### Overall Comparison
 #### Steps vs Scores
 $$
-\begin{table}[]
-\begin{tabular}{llllll}
+\begin{array}{|l|l|l|l|l|l|}
 \hline
-\multicolumn{1}{|l|}{}              & \multicolumn{1}{l|}{Learning Rate} & \multicolumn{1}{l|}{Maximum} & \multicolumn{1}{l|}{Minimum} & \multicolumn{1}{l|}{Median} & \multicolumn{1}{l|}{Mean} \\ \hline
-\multicolumn{1}{|l|}{Environment 1} & \multicolumn{1}{l|}{}              & \multicolumn{1}{l|}{100}     & \multicolumn{1}{l|}{}        & \multicolumn{1}{l|}{}       & \multicolumn{1}{l|}{}     \\ \cline{1-2} \cline{4-6} 
-\multicolumn{1}{l|}{Environment 2}  & \multicolumn{1}{l|}{}              & \multicolumn{1}{l|}{100}     & \multicolumn{1}{l|}{}        & \multicolumn{1}{l|}{}       & \multicolumn{1}{l|}{}     \\ \cline{2-2} \cline{4-6} 
-Environment 3                       & 0.001402                           & 100                          & -137.3110                    & -31.9665                    & -0.4030                   \\
-Environment 4                       & 0.001469                           & 100                          & -101.2027                    & -34.9002                    & -9.9136                   \\ \cline{2-2} \cline{4-6} 
-\multicolumn{1}{l|}{Environment 5}  & \multicolumn{1}{l|}{}              & \multicolumn{1}{l|}{100}     & \multicolumn{1}{l|}{}        & \multicolumn{1}{l|}{}       & \multicolumn{1}{l|}{}     \\ \cline{2-2} \cline{4-6} 
-\end{tabular}
-\end{table}
+              & Learning Rate & Maximum & Minimum   & Median   & Mean    \\ \hline
+Environment\, 1 &               & 100     &           &          &         \\ \hline
+Environment\, 2 &               & 100     &           &          &         \\ \hline
+Environment\, 3 & 0.001402      & 100     & -137.3110 & -31.9665 & -0.4030 \\ \hline
+Environment\, 4 & 0.001469      & 100     & -101.2027 & -34.9002 & -9.9136 \\ \hline
+Environment\, 5 &               & 100     &           &          &         \\ \hline
+\end{array}
 $$
+<br>
+#### Steps vs Relative Distance
+
+
+<br>
+#### Episodes vs Steps
+
+
+<br>
+#### Episodes vs Scores
+
+
+
 ## References
 
 Malmo
