@@ -164,7 +164,7 @@ As it was mentioned in our status report, we can qualitatively evaluate the impl
 Figure 5.1. No degree, complete 3x3 platform, glass always centered <br>
 <br>
 
-<img src="image/Environment_2.png" width=700> <br>
+<img src="image/Environment_2.png"> <br>
 Figure 5.2. No degree, complete 3x3 platform, glass randomly at x = 1.5 <br>
 <br>
 
@@ -182,14 +182,19 @@ Figure 5.5. Wider degree, incomplete 3x3 platform, glass may randomly be at any 
 
 ### Overall Comparison
 #### Steps vs Scores
-|               | Learning Rate | Maximum | Minimum   | Median   | Mean    |
-|---------------|---------------|---------|-----------|----------|---------|
-| Environment 1 |               | 100     |           |          |         |
-| Environment 2 |               | 100     |           |          |         |
-| Environment 3 | 0.001402      | 100     | -137.3110 | -31.9665 | -0.4030 |
-| Environment 4 | 0.001469      | 100     | -101.2027 | -34.9002 | -9.9136 |
-| Environment 5 |               | 100     |           |          |         |
-
+$$
+\begin{table}[]
+\begin{tabular}{llllll}
+\hline
+\multicolumn{1}{|l|}{}              & \multicolumn{1}{l|}{Learning Rate} & \multicolumn{1}{l|}{Maximum} & \multicolumn{1}{l|}{Minimum} & \multicolumn{1}{l|}{Median} & \multicolumn{1}{l|}{Mean} \\ \hline
+\multicolumn{1}{|l|}{Environment 1} & \multicolumn{1}{l|}{}              & \multicolumn{1}{l|}{100}     & \multicolumn{1}{l|}{}        & \multicolumn{1}{l|}{}       & \multicolumn{1}{l|}{}     \\ \cline{1-2} \cline{4-6} 
+\multicolumn{1}{l|}{Environment 2}  & \multicolumn{1}{l|}{}              & \multicolumn{1}{l|}{100}     & \multicolumn{1}{l|}{}        & \multicolumn{1}{l|}{}       & \multicolumn{1}{l|}{}     \\ \cline{2-2} \cline{4-6} 
+Environment 3                       & 0.001402                           & 100                          & -137.3110                    & -31.9665                    & -0.4030                   \\
+Environment 4                       & 0.001469                           & 100                          & -101.2027                    & -34.9002                    & -9.9136                   \\ \cline{2-2} \cline{4-6} 
+\multicolumn{1}{l|}{Environment 5}  & \multicolumn{1}{l|}{}              & \multicolumn{1}{l|}{100}     & \multicolumn{1}{l|}{}        & \multicolumn{1}{l|}{}       & \multicolumn{1}{l|}{}     \\ \cline{2-2} \cline{4-6} 
+\end{tabular}
+\end{table}
+$$
 ## References
 
 Malmo
