@@ -14,7 +14,7 @@ https://bikaylee.github.io/Pixel-Jump/.
 - [x] Proximal Policy Optimization
 
 #### Level of Difficulty 
-**all maps are randomly generated for each missio** <br><br>
+**all maps are randomly generated for each mission** <br>
 1. No degree, complete 3x3 platform, glass always centered <br>
 2. No degree, complete 3x3 platform, glass randomly at x = 1.5 <br>
 3. Restricted degree, complete 3x3 platform, glass randomly at any block <br>
