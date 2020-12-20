@@ -160,6 +160,10 @@ As it was mentioned in our status report, we can qualitatively evaluate the impl
 
 <br>
 ### Quantitative
+<br>
+**These are the results data after training for approximately 36 hours per environment.**
+
+<br>
 <img src="image/Environment_1.png"> <br>
 &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Figure 5.1. No degree, complete 3x3 platform, glass always centered <br>
 <br>
@@ -188,12 +192,12 @@ As it was mentioned in our status report, we can qualitatively evaluate the impl
 $$
 \begin{array}{|l|l|l|l|l|l|}
 \hline
-                  & Learning\,\, Rate   & Maximum   & Minimum   & Median   & Mean    \\ \hline
-Environment\,\, 1 & 0.001872            & 100      & -99.9322  & 80.2      & 46.0874 \\ \hline
-Environment\,\, 2 & 0.002244            & 100      & -99.9322  & 71.8      & 35.4813 \\ \hline
-Environment\,\, 3 & 0.001403            & 100      & -101.5310 & -31.9660  & -0.3961 \\ \hline
-Environment\,\, 4 & 0.001469            & 100      & -101.2027 & -34.9002  & -9.9136 \\ \hline
-Environment\,\, 5 & 0.001082            & 100      & -106.9464 & -44.2300  & -28.321 \\ \hline
+                  & Learning\,\, Rate   & Maximum   & Minimum   & Median   & Mean     \\ \hline
+Environment\,\, 1 & 0.001818            & 100      & -89.0039   & 80.2      & 46.1249 \\ \hline
+Environment\,\, 2 & 0.002246            & 100      & -75.9142   & 71.8      & 35.4813 \\ \hline
+Environment\,\, 3 & 0.001403            & 100      & -101.5310  & -31.9660  & -0.3961 \\ \hline
+Environment\,\, 4 & 0.001469            & 100      & -101.2027  & -34.9002  & -9.9136 \\ \hline
+Environment\,\, 5 & 0.001082            & 100      & -106.9464  & -44.2300  & -28.321 \\ \hline
 \end{array}
 $$
 
@@ -203,8 +207,8 @@ $$
 \begin{array}{|l|l|l|l|l|l|}
 \hline
                   & Learning\,\,Rate & Maximum & Minimum & Median & Mean   \\ \hline
-Environment\,\, 1 & -0.00003         & 18.9395 & 0.0     & 0.98   & 1.4386 \\ \hline
-Environment\,\, 2 & -0.00003         & 18.5408 & 0.0     & 1.7155 & 1.6401 \\ \hline
+Environment\,\, 1 & -0.00003         & 6.0630  & 0.0     & 0.98   & 1.4343 \\ \hline
+Environment\,\, 2 & -0.00003         & 6.7816  & 0.0     & 1.7113 & 1.6400 \\ \hline
 Environment\,\, 3 & -0.00003         & 9.1531  & 0.0300  & 2.4217 & 2.5423 \\ \hline
 Environment\,\, 4 & -0.00004         & 9.1203  & 0.0200  & 2.7770 & 2.8615 \\ \hline
 Environment\,\, 5 & -0.00005         & 9.6946  & 0.0316  & 3.4590 & 3.5956 \\ \hline
@@ -261,3 +265,6 @@ Tools
 - [Draw.io](http://draw.io/)
 - [Jupyter Notebook](https://docs.anaconda.com/ae-notebooks/user-guide/basic-tasks/apps/jupyter/)
 - [LaTex Overleaf](https://www.overleaf.com/learn)
+- [Table Generator](https://www.tablesgenerator.com/latex_tables)
+- [Linear Regression](https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.stats.linregress.html)
+
