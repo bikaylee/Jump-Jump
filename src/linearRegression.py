@@ -29,9 +29,10 @@ def output(dataX, dataY, xLabel, yLabel):
     slope, intercept = np.polyfit(dataX, dataY, 1)
     print(round(slope,6))
     print(round(np.max(dataY,axis=0),4))
+    print(round(np.min(dataY,axis=0),4))
     print(round(np.median(dataY,axis=0),4))
     print(round(np.mean(dataY,axis=0),4))
-    print(round(np.min(dataY,axis=0),4))
+
     print()
     
     # log_frequency = 100
