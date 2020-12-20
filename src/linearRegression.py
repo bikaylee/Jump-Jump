@@ -1,3 +1,6 @@
+# Author: Bixia Deng
+# Date: 12/19/2020
+
 from scipy import stats
 import matplotlib.pyplot as plt
 import numpy as np
