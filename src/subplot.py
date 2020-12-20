@@ -1,3 +1,6 @@
+# Author: Bixia Deng
+# Date: 12/19/2020
+
 import numpy as np 
 import matplotlib.pyplot as plt
 
