@@ -1,7 +1,7 @@
 import numpy as np 
 import matplotlib.pyplot as plt
 
-fig, ax = plt.subplots(2, 2, figsize=(11, 8))
+fig, ax = plt.subplots(2, 2, figsize=(11, 8), dpi=80)
 
 def plotGraph(fileName, xLabel, yLabel, category, i, j):
     data = np.genfromtxt(fileName+'.txt', delimiter="\t")
