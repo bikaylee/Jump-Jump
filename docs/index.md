@@ -4,6 +4,7 @@ title:  Home
 ---
 
 
+<img src="image/icon.png"><br>
 <img src="image/MalmoDemo.gif" width=600><br>
 
 Pixel Jump is a game performing physical jump from one point to another with user-control gravitational force and velocity and horizontal degree. The purpose of this project is to let the agent observe his surrounding platforms and then pick an initial velocity from a continuous action space to ensure that the agent can land on various positions of the next platform and hopefully jump onto the glass (goal) block for greater reward. 
