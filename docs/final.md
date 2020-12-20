@@ -155,25 +155,42 @@ def movement (self, v, x, y, z, degree):
 
 <br><br>
 ## Evaluation
+### Qualitative
+As it was mentioned in our status report, we can qualitatively evaluate the implementation of our solution through the visual performance of the agent such as its choice of movement and the farthest distance it can reach. It is obvious that the agent was making random choices at the beginning of the training process because it kept dying after the first step of the episode. After about 10000+ episodes of training, we can clearly see that the agent has improved its strategy of degree choosing. In an environment without degree restriction, the agent learned to choose a more reasonable degree relative to its current position; for example, if the agent is currently standing at the right most size of a platform, then it would tend to choose a positive degree (toward the left) for the next movement. The agent’s choice of velocity as well has been improving. In both the environment with degree and the environment without degree, we can see that the agent is able to reach more platforms more frequently in the later episodes. In addition, in all the environments, the agent was able to land at positions that are closer to the glass block as episodes pases which means the relative difference has been decreasing and the agent has been refining its choice of velocity and degree to a more optimal state. We thus can come to a conclusion that our agent has been improving overtime.
 
+<br>
 ### Quantitative
 #### Environment 1
-In difficulty one, the map generated for the agent would be always a 3x3 map with a center block in the middle of every platform. Also the agent's action state only allows him to jump forward in a velocity range from 8.05 to 11.72. 
-At the beginning of the process, we found that the agent would tend to choose the distance close to itself to perform a jump. After 15 hours training, the ability of this agent to learn to jump further was not very outstanding; The agent would tend to jump to mainly three positions. Firstly, the position closer to himself, and then fall into the lava. Secondly, the position between glass_type and regular_block. Thirdly, the position that is very far away from himself. 
+<br>
+Figure 5.1. No degree, complete 3x3 platform, glass always centered <br>
+<img src="image/Environment_1.png"> 
+<br>
 
 #### Environment 2
-In difficulty two, the map generated for the agent would be slightly different than the map at difficulty 1. When the platform remains completed in difficulty two, the position of the glass_type_block(center block) would either be one block forward or one block behind to increase the difficulty for the agent to learn. The agent would also pick a velocity in the range from 8.05 to 11.72 with no turning degree. 
-In the testing process of difficulty two, the agent would perform like what he did in the difficulty one, by choosing the maximum speed and minimum speed to perform a jump. Later on, the agent will choose to land closer to the glass_type_block. Especially, he will likely choose the position between the regular_block and the glass_type_block.
+<br>
+Figure 5.2. No degree, complete 3x3 platform, glass randomly at x = 1.5 <br>
+<img src="image/Environment_2.png"> 
+<br>
 
 #### Environment 3
+<br>
+Figure 5.3. Restricted degree, complete 3x3 platform, glass randomly at any block <br>
+<img src="image/Environment_3.png"> 
+<br>
 
 #### Environment 4
+<br>
+Figure 5.4. Restricted degree, incomplete 3x3 platform, glass may randomly be at any block <br>
+<img src="image/Environment_4.png"> 
+<br>
 
 #### Environment 5
+<br>
+Figure 5.5. Wider degree, incomplete 3x3 platform, glass may randomly be at any block <br>
+<img src="image/Environment_5.png"> 
+<br>
 
-### Qualitative
-
-
+#### Overall Comparison
 
 
 ## References
