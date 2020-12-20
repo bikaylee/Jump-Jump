@@ -185,12 +185,12 @@ Figure 5.5. Wider degree, incomplete 3x3 platform, glass may randomly be at any 
 $$
 \begin{array}{|l|l|l|l|l|l|}
 \hline
-              & Learning Rate & Maximum & Minimum   & Median   & Mean    \\ \hline
-Environment\, 1 &               & 100     &           &          &         \\ \hline
-Environment\, 2 &               & 100     &           &          &         \\ \hline
-Environment\, 3 & 0.001402      & 100     & -137.3110 & -31.9665 & -0.4030 \\ \hline
-Environment\, 4 & 0.001469      & 100     & -101.2027 & -34.9002 & -9.9136 \\ \hline
-Environment\, 5 &               & 100     &           &          &         \\ \hline
+                  & Learning\,\, Rate & Maximum & Minimum   & Median   & Mean    \\ \hline
+Environment\,\, 1 &                   & 100     &           &          &         \\ \hline
+Environment\,\, 2 &                   & 100     &           &          &         \\ \hline
+Environment\,\, 3 & 0.001402          & 100     & -137.3110 & -31.9665 & -0.4030 \\ \hline
+Environment\,\, 4 & 0.001469          & 100     & -101.2027 & -34.9002 & -9.9136 \\ \hline
+Environment\,\, 5 &                   & 100     &           &          &         \\ \hline
 \end{array}
 $$
 <br>
