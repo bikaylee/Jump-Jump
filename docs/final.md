@@ -161,23 +161,23 @@ As it was mentioned in our status report, we can qualitatively evaluate the impl
 <br>
 ### Quantitative
 <img src="image/Environment_1.png"> <br>
-Figure 5.1. No degree, complete 3x3 platform, glass always centered <br>
+&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Figure 5.1. No degree, complete 3x3 platform, glass always centered <br>
 <br>
 
 <img src="image/Environment_2.png"> <br>
-Figure 5.2. No degree, complete 3x3 platform, glass randomly at x = 1.5 <br>
+&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Figure 5.2. No degree, complete 3x3 platform, glass randomly at x = 1.5 <br>
 <br>
 
 <img src="image/Environment_3.png"> <br>
-Figure 5.3. Restricted degree, complete 3x3 platform, glass randomly at any block <br>
+&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Figure 5.3. Restricted degree, complete 3x3 platform, glass randomly at any block <br>
 <br>
 
 <img src="image/Environment_4.png"> <br>
-Figure 5.4. Restricted degree, incomplete 3x3 platform, glass may randomly be at any block <br>
+&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Figure 5.4. Restricted degree, incomplete 3x3 platform, glass may randomly be at any block <br>
 <br>
 
 <img src="image/Environment_5.png"> <br>
-Figure 5.5. Wider degree, incomplete 3x3 platform, glass may randomly be at any block <br>
+&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Figure 5.5. Wider degree, incomplete 3x3 platform, glass may randomly be at any block <br>
 <br>
 
 ### Overall Comparison
@@ -188,7 +188,7 @@ $$
                   & Learning\,\, Rate & Maximum & Minimum   & Median   & Mean    \\ \hline
 Environment\,\, 1 &                   & 100     &           &          &         \\ \hline
 Environment\,\, 2 &                   & 100     &           &          &         \\ \hline
-Environment\,\, 3 & 0.001402          & 100     & -137.3110 & -31.9665 & -0.4030 \\ \hline
+Environment\,\, 3 &                   & 100     &           &          &         \\ \hline
 Environment\,\, 4 & 0.001469          & 100     & -101.2027 & -34.9002 & -9.9136 \\ \hline
 Environment\,\, 5 &                   & 100     &           &          &         \\ \hline
 \end{array}
