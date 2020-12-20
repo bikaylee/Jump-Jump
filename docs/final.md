@@ -181,29 +181,61 @@ As it was mentioned in our status report, we can qualitatively evaluate the impl
 <br>
 
 ### Overall Comparison
+<br>
 #### Steps vs Scores
 $$
 \begin{array}{|l|l|l|l|l|l|}
 \hline
-                  & Learning\,\, Rate & Maximum & Minimum   & Median   & Mean    \\ \hline
-Environment\,\, 1 &                   & 100     &           &          &         \\ \hline
-Environment\,\, 2 &                   & 100     &           &          &         \\ \hline
-Environment\,\, 3 &                   & 100     &           &          &         \\ \hline
-Environment\,\, 4 & 0.001469          & 100     & -101.2027 & -34.9002 & -9.9136 \\ \hline
-Environment\,\, 5 &                   & 100     &           &          &         \\ \hline
+                  & Learning\,\, Rate   & Maximum   & Minimum   & Median   & Mean    \\ \hline
+Environment\,\, 1 & 0.001872            & 100      & -99.9322  & 80.2      & 46.0874 \\ \hline
+Environment\,\, 2 & 0.002244            & 100      & -99.9322  & 71.8      & 35.4813 \\ \hline
+Environment\,\, 3 & 0.001403            & 100      & -101.5310 & -31.9660  & -0.3961 \\ \hline
+Environment\,\, 4 & 0.001469            & 100      & -101.2027 & -34.9002  & -9.9136 \\ \hline
+Environment\,\, 5 & 0.001082            & 100      & -106.9464 & -44.2300  & -28.321 \\ \hline
 \end{array}
 $$
-<br>
+
+<br><br>
 #### Steps vs Relative Distance
+$$
+\begin{array}{|l|l|l|l|l|l|}
+\hline
+                  & Learning\,\,Rate & Maximum & Minimum & Median & Mean   \\ \hline
+Environment\,\, 1 & -0.00003         & 18.9395 & 0.0     & 0.98   & 1.4386 \\ \hline
+Environment\,\, 2 & -0.00003         & 18.5408 & 0.0     & 1.7155 & 1.6401 \\ \hline
+Environment\,\, 3 & -0.00003         & 9.1531  & 0.0300  & 2.4217 & 2.5423 \\ \hline
+Environment\,\, 4 & -0.00004         & 9.1203  & 0.0200  & 2.7770 & 2.8615 \\ \hline
+Environment\,\, 5 & -0.00005         & 9.6946  & 0.0316  & 3.4590 & 3.5956 \\ \hline
+\end{array}
+$$
 
-
-<br>
+<br><br>
 #### Episodes vs Steps
+$$
+\begin{array}{|l|l|l|l|l|l|}
+\hline
+                  & Learning\,\,Rate & Maximum   & Minimum   & Median   & Mean   \\ \hline
+Environment\,\, 1 & 0.000531         & 43.0      & 1.0       & 2.0      & 3.3073 \\ \hline
+Environment\,\, 2 & 0.000299         & 28.0      & 1.0       & 2.0      & 2.5417 \\ \hline
+Environment\,\, 3 & 0.000040         & 17.0      & 1.0       & 1.0      & 1.5296 \\ \hline
+Environment\,\, 4 & 0.000026         & 8.0       & 1.0       & 1.0      & 1.3888 \\ \hline
+Environment\,\, 5 & 0.000010         & 8.0       & 1.0       & 1.0      & 1.2092 \\ \hline
+\end{array}
+$$
 
-
-<br>
+<br><br>
 #### Episodes vs Scores
-
+$$
+\begin{array}{|l|l|l|l|l|l|}
+\hline
+                  & Learning\,\, Rate & Maximum   & Minimum   & Median   & Mean     \\ \hline
+Environment     1 & 0.044356          & 3342.4393 & -107.5069 & 47.6     & 152.8419 \\ \hline
+Environment     2 & 0.024983          & 1713.7326 & -99.9322  & 32.0     & 90.4841  \\ \hline
+Environment     3 & 0.003250          & 1156.237  & -101.5310 & -33.5035 & -0.0059  \\ \hline
+Environment     4 & 0.002422          & 499.5853  & -74.3749  & -36.5832 & -13.6652 \\ \hline
+Environment     5 & 0.001297          & 487.4780  & -95.7373  & -44.0969 & -34.0995 \\ \hline
+\end{array}
+$$
 
 
 ## References
