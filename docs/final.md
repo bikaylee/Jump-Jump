@@ -160,28 +160,23 @@ As it was mentioned in our status report, we can qualitatively evaluate the impl
 
 <br>
 ### Quantitative
-#### Environment 1
-<img src="image/Environment_1.png"> 
+<img src="image/Environment_1.png" width=700> <br>
 Figure 5.1. No degree, complete 3x3 platform, glass always centered <br>
 <br>
 
-#### Environment 2
-<img src="image/Environment_2.png"> 
+<img src="image/Environment_2.png" width=700> <br>
 Figure 5.2. No degree, complete 3x3 platform, glass randomly at x = 1.5 <br>
 <br>
 
-#### Environment 3
-<img src="image/Environment_3.png"> 
+<img src="image/Environment_3.png" width=700> <br>
 Figure 5.3. Restricted degree, complete 3x3 platform, glass randomly at any block <br>
 <br>
 
-#### Environment 4
-<img src="image/Environment_4.png"> 
+<img src="image/Environment_4.png" width=700> <br>
 Figure 5.4. Restricted degree, incomplete 3x3 platform, glass may randomly be at any block <br>
 <br>
 
-#### Environment 5
-<img src="image/Environment_5.png">
+<img src="image/Environment_5.png" width=700> <br>
 Figure 5.5. Wider degree, incomplete 3x3 platform, glass may randomly be at any block <br>
 <br>
 
