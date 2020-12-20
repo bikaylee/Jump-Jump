@@ -1,6 +1,6 @@
 ## Video
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/iSaRsq1KTeU" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src=" " frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 <br>
 
 ## Project Summary
@@ -187,7 +187,7 @@ As it was mentioned in our status report, we can qualitatively evaluate the impl
 ### Overall Comparison
 <br>
 **Please refer to the description of environments section above for the difference between environments.**
-<br>
+<br><br>
 #### Steps vs Scores
 $$
 \begin{array}{|l|l|l|l|l|l|}
@@ -242,6 +242,19 @@ Environment\,\, 4 & 0.002422          & 499.5853  & -74.3749  & -36.5832 & -13.6
 Environment\,\, 5 & 0.001297          & 487.4780  & -95.7373  & -44.0969 & -34.0995 \\ \hline
 \end{array}
 $$
+
+<br>
+Learning Rate here refers to the rate of change of the linear regression model we generated for the data sets. The Learning Rate column of all the tables exhibits a decreasing trend from less difficult environments to more difficult environments. It coincides with our hypothesis that the progress of learning is more efficient in the environments with lower difficulty than environments with higher difficulty. 
+
+<br><br>
+Based on the Learning Rate between “Episodes vs Steps” and “Steps vs Relative Distance”, the agent tends to learn faster on jumping further than getting closer to the glass block.
+
+<br><br>
+Both the Environment 4 and Environment 5 have the same value for the maximum distance because their environment settings are identical except for the degree restriction. However, there exists a larger gap between their Learning Rates; it takes longer for the agent to learn an optimal degree choosing strategy in Environment 4 than Environment 5.
+
+<br><br>
+Comparing Environment 1 and Environment 5, there exists a huge difference in all categories of the tables. Since Environment 1 only requires the agent to pick the velocity, its action spaces and map are comparatively much easier than Environment 5 that requires to pick two actions from two continuous action spaces. Therefore, all of their data sets tremendously differ. 
+
 
 <br><br>
 ## References
