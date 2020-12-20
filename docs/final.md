@@ -180,8 +180,15 @@ Figure 5.4. Restricted degree, incomplete 3x3 platform, glass may randomly be at
 Figure 5.5. Wider degree, incomplete 3x3 platform, glass may randomly be at any block <br>
 <br>
 
-#### Overall Comparison
-
+### Overall Comparison
+#### Steps vs Scores
+|               | Learning Rate | Maximum | Minimum   | Median   | Mean    |
+|---------------|---------------|---------|-----------|----------|---------|
+| Environment 1 |               | 100     |           |          |         |
+| Environment 2 |               | 100     |           |          |         |
+| Environment 3 | 0.001402      | 100     | -137.3110 | -31.9665 | -0.4030 |
+| Environment 4 | 0.001469      | 100     | -101.2027 | -34.9002 | -9.9136 |
+| Environment 5 |               | 100     |           |          |         |
 
 ## References
 
