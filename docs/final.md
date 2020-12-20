@@ -98,8 +98,8 @@ In order to make this project more complex, the degree of turning can enable the
 **$$\theta _{right} = \tan^{-1}{\frac{X_{curr}}{Gap_{min} + 1}} $$** <br> 
 
 <br>
-In another environment, we granted the agent a relatively more complete control of the degree. However, an increase to the range of choices, especially when it is a continuous state, can greatly impact the reinforcement learning process by adding more noise and complexity to the model. We would want to choose an optimal range of degrees that will add challenge to the agent’s learning process without making the model over complex. The max degree the agent required to travel from one platform to the next platform in the most extreme case is approximately 53 degree. In this environment, the agent is allowed to choose from a larger range of degrees [-53, 53] without other restrictions. <br>
-**Degree = [-53, 53]**
+In another environment, we granted the agent a relatively more complete control of the degree. However, an increase to the range of choices, especially when it is a continuous state, can greatly impact the reinforcement learning process by adding more noise and complexity to the model. We would want to choose an optimal range of degrees that will add challenge to the agent’s learning process without making the model over complex. The max degree the agent required to travel from one platform to the next platform in the most extreme case is approximately 53 degree. In this environment, the agent is allowed to choose from a larger range of degrees [-56, 56] without other restrictions. <br>
+**Degree = [-56, 56]**
 
 <br>
 #### Projectile Motion in 3D (Jump Simulation)
@@ -181,6 +181,8 @@ As it was mentioned in our status report, we can qualitatively evaluate the impl
 <br>
 
 ### Overall Comparison
+<br>
+**Please refer to the description of environments section above for the difference between environments.**
 <br>
 #### Steps vs Scores
 $$
