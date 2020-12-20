@@ -246,13 +246,13 @@ $$
 <br>
 Learning Rate here refers to the rate of change of the linear regression model we generated for the data sets. The Learning Rate column of all the tables exhibits a decreasing trend from less difficult environments to more difficult environments. It coincides with our hypothesis that the progress of learning is more efficient in the environments with lower difficulty than environments with higher difficulty. 
 
-<br><br>
+<br>
 Based on the Learning Rate between “Episodes vs Steps” and “Steps vs Relative Distance”, the agent tends to learn faster on jumping further than getting closer to the glass block.
 
-<br><br>
+<br>
 Both the Environment 4 and Environment 5 have the same value for the maximum distance because their environment settings are identical except for the degree restriction. However, there exists a larger gap between their Learning Rates; it takes longer for the agent to learn an optimal degree choosing strategy in Environment 4 than Environment 5.
 
-<br><br>
+<br>
 Comparing Environment 1 and Environment 5, there exists a huge difference in all categories of the tables. Since Environment 1 only requires the agent to pick the velocity, its action spaces and map are comparatively much easier than Environment 5 that requires to pick two actions from two continuous action spaces. Therefore, all of their data sets tremendously differ. 
 
 
