@@ -5,6 +5,8 @@ CS175 Fall 2020
 Our AI project is a Jump & Jump gameplay simulation in Minecraft, with different sizes and shapes of platform for the agent to jump on based on gravity and velocity. 
 
 ---
+Our agent James is trapped by a swamp of lava. In order to escape, he must jump through a variety of platforms without falling to the lava. Our job is to improve his jumping skills by training him in his “mind palace” because he only lives once.
+<br><br>
 ### Website
 https://bikaylee.github.io/Pixel-Jump/.
 
