@@ -46,7 +46,7 @@ Breaking down this project in particular, our overall aspect in terms of concept
 ### Environment 
 Level of difficulty: (all maps are randomly generated for each mission) <br>
 
-<img src="image/Environments.png" width=700> Figure 4. Observation Layers<br>
+<img src="image/Environments.png"> Figure 4. Observation Layers<br>
 <br>
 <br>
 ### Reward System
