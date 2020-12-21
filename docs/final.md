@@ -45,12 +45,9 @@ Breaking down this project in particular, our overall aspect in terms of concept
 
 ### Environment 
 Level of difficulty: (all maps are randomly generated for each mission) <br>
-1. No degree, complete 3x3 platform, glass always centered <br>
-2. No degree, complete 3x3 platform, glass randomly at x = 1.5 <br>
-3. Restricted degree, complete 3x3 platform, glass randomly at any block <br>
-4. Restricted degree, incomplete 3x3 platform, glass may randomly be at any block <br>
-5. Wider degree, incomplete 3x3 platform, glass may randomly be at any block <br>
 
+<img src="image/Environments.png" width=700> Figure 4. Observation Layers<br>
+<br>
 <br>
 ### Reward System
 **Glass Block of Platform:** +100 <br>
@@ -77,7 +74,7 @@ Layers that store information about the next platform with one layer containing 
 
 <br>
 
-<img src="image/Observational.png"> Figure 4. Observation Layers<br>
+<img src="image/Observational.png"> Figure 5. Observation Layers<br>
 
 <br>
 Previously, our observation space was more difficult to interpret than the final version. The previous observation space takes in only one layer of 5 x 10 storing all information both glass blocks and regular blocks. Also, rewards were ignoring the relative distance and made the agent only have the feedback of observation layers and whether its choice of velocity had either failed or succeeded. Since it lacks information of the relative distance in respect of the goal block, it had a negative influence on the agent’s choice of velocity. Therefore, we had added relative distance to its reward system and separated into two layers for better choice of velocity. 
@@ -165,23 +162,23 @@ As it was mentioned in our status report, we can qualitatively evaluate the impl
 
 <br>
 <img src="image/Environment_1.png"> <br>
-&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Figure 5.1. No degree, complete 3x3 platform, glass always centered <br>
+&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Figure 6.1. No degree, complete 3x3 platform, glass always centered <br>
 <br>
 
 <img src="image/Environment_2.png"> <br>
-&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Figure 5.2. No degree, complete 3x3 platform, glass randomly at x = 1.5 <br>
+&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Figure 6.2. No degree, complete 3x3 platform, glass randomly at x = 1.5 <br>
 <br>
 
 <img src="image/Environment_3.png"> <br>
-&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Figure 5.3. Restricted degree, complete 3x3 platform, glass randomly at any block <br>
+&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Figure 6.3. Restricted degree, complete 3x3 platform, glass randomly at any block <br>
 <br>
 
 <img src="image/Environment_4.png"> <br>
-&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Figure 5.4. Restricted degree, incomplete 3x3 platform, glass may randomly be at any block <br>
+&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Figure 6.4. Restricted degree, incomplete 3x3 platform, glass may randomly be at any block <br>
 <br>
 
 <img src="image/Environment_5.png"> <br>
-&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Figure 5.5. Wider degree, incomplete 3x3 platform, glass may randomly be at any block <br>
+&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Figure 6.5. Wider degree, incomplete 3x3 platform, glass may randomly be at any block <br>
 <br>
 
 ### Overall Comparison
