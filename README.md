@@ -2,7 +2,7 @@ CS175 Fall 2020
 
 # Pixel Jump
 
-Our AI project is a Jump & Jump gameplay simulation in Minecraft, with different sizes and shapes of platform for the agent to jump on based on gravity and velocity. 
+Pixel Jump is a gameplay simulation in Minecraft that the agent will perform physical jumps from one platform to another with user-control jump simulation based on projectile motion in 3D. The purpose of this project is to let the agent observe his surrounding platforms and then pick an initial velocity from a continuous action space to ensure that the agent can land on various positions of the next platform and hopefully jump onto the glass (goal) block for greater reward.
 
 ---
 Our agent James is trapped by a swamp of lava. In order to escape, he must jump through a variety of platforms without falling to the lava. Our job is to improve his jumping skills by training him in his “mind palace” because he only lives once.
