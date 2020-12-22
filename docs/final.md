@@ -1,6 +1,6 @@
 ## Video
 
-<iframe width="700" height="390" src="https://www.youtube.com/embed/Et0kGVP0_U0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="700" height="420" src="https://www.youtube.com/embed/Et0kGVP0_U0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 <br>
 
 ## Project Summary
