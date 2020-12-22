@@ -25,7 +25,7 @@ Level of difficulty: (all maps are randomly generated for each mission) <br>
 **Lava:** < -10,  based on the relative distance to glass block 
 
 
-
+<br><br>
 Reports:
 
 - [Proposal](proposal.html)
